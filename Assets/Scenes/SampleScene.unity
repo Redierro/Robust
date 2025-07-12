@@ -288,7 +288,7 @@ MonoBehaviour:
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 0}
+  playerPrefab: {fileID: 7156508704601250604, guid: ca6670d6286b19f4a9e362380a8b5afa, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs: []
@@ -1133,6 +1133,18 @@ MonoBehaviour:
           m_StringArgument: LobbyPanel
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 153268107}
+        m_TargetAssemblyTypeName: SteamLobby.SteamLobbySC, Assembly-CSharp
+        m_MethodName: HostLobby
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &879599507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1610,7 +1622,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1141134112}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 153268107}
+        m_TargetAssemblyTypeName: SteamLobby.SteamLobbySC, Assembly-CSharp
+        m_MethodName: LeaveLobby
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1141134112
 MonoBehaviour:
   m_ObjectHideFlags: 0
