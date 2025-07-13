@@ -1,5 +1,80 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3237185692641449261
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4479303523553283492}
+  - component: {fileID: 5256549462742122604}
+  - component: {fileID: 4336887690150077420}
+  m_Layer: 5
+  m_Name: BG
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &4479303523553283492
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3237185692641449261}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6768696349608041016}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -1.0351868, y: 0.517601}
+  m_SizeDelta: {x: -10.3528, y: -9.3175}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &5256549462742122604
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3237185692641449261}
+  m_CullTransparentMesh: 1
+--- !u!114 &4336887690150077420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3237185692641449261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &3301880857472084808
 GameObject:
   m_ObjectHideFlags: 0
@@ -121,7 +196,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4426680964064872425}
+      - m_Target: {fileID: 8642538612859022758}
         m_TargetAssemblyTypeName: SteamLobby.PlayerLobbyHandler, Assembly-CSharp
         m_MethodName: OnReadyButtonClicked
         m_Mode: 1
@@ -227,8 +302,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -280,10 +355,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6768696349608041016}
-  - component: {fileID: 4426680964064872425}
-  - component: {fileID: 7567253935965429996}
+  - component: {fileID: 8642538612859022758}
+  - component: {fileID: 1011064301157532128}
   m_Layer: 5
-  m_Name: PlayerSlot
+  m_Name: PlayerLobbySlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -301,6 +376,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 4479303523553283492}
   - {fileID: 8388412472760384284}
   - {fileID: 5102111547371334102}
   m_Father: {fileID: 0}
@@ -310,7 +386,7 @@ RectTransform:
   m_AnchoredPosition: {x: 9.4887085, y: 12.6515}
   m_SizeDelta: {x: 511.174, y: 74.697}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &4426680964064872425
+--- !u!114 &8642538612859022758
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -328,7 +404,7 @@ MonoBehaviour:
   isReady: 0
   readyButton: {fileID: 9145149287434842236}
   nameText: {fileID: 6574254976338117305}
---- !u!114 &7567253935965429996
+--- !u!114 &1011064301157532128
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -343,7 +419,7 @@ MonoBehaviour:
   sceneId: 0
   _assetId: 296366110
   serverOnly: 0
-  visibility: 0
+  visibility: 2
   hasSpawned: 0
 --- !u!1 &7921030711283218152
 GameObject:

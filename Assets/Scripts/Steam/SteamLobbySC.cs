@@ -18,7 +18,7 @@ namespace SteamLobby
         protected Callback<LobbyEnter_t> lobbyEntered;
         protected Callback<LobbyChatUpdate_t> lobbyChatUpdate;
 
-        private const string HostAdressKey = "HostAdress";
+        private const string HostAddressKey = "HostAddress";
 
         private void Awake()
         {
@@ -59,12 +59,13 @@ namespace SteamLobby
             Debug.Log("Lobby sucesfully created. Lobby ID: " + callback.m_ulSteamIDLobby);
             networkManager.StartHost();
 
-            SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAdressKey, SteamUser.GetSteamID().ToString());
+            SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey, SteamUser.GetSteamID().ToString());
             lobbyID = callback.m_ulSteamIDLobby;
         }
         void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback)
         {
             Debug.Log("Join request received for lobby: " + callback.m_steamIDLobby);
+
             if (NetworkClient.isConnected || NetworkClient.active)
             {
                 Debug.Log("NetworkClient is active or connected. Disconnecting before joining new lobby.");
@@ -81,7 +82,7 @@ namespace SteamLobby
                 return;
             }
             lobbyID = callback.m_ulSteamIDLobby;
-            string _hostAddress = SteamMatchmaking.GetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAdressKey);
+            string _hostAddress = SteamMatchmaking.GetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey);
             networkManager.networkAddress = _hostAddress;
             Debug.Log("Entered lobby: " + callback.m_ulSteamIDLobby);
             networkManager.StartClient();
@@ -95,10 +96,10 @@ namespace SteamLobby
             Debug.Log($"LobbyChatUpdate: {stateChange}");
 
             bool shouldUpdate = stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeEntered) ||
-                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeLeft) ||
-                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeDisconnected) ||
-                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeKicked) ||
-                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeBanned);
+                                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeLeft) ||
+                                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeDisconnected) ||
+                                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeKicked) ||
+                                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeBanned);
 
             if (shouldUpdate)
             {
