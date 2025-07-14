@@ -64,7 +64,7 @@ namespace SteamLobby
             }
 
             int j = 0;
-            Debug.Log("member count: " + memberCount + " , list of orderedmembers: " + orderedMembers);
+
             foreach (var member in orderedMembers)
             {
                 TextMeshProUGUI txtMesh = playerListParent.GetChild(j).GetChild(0).GetComponent<TextMeshProUGUI>();
@@ -75,9 +75,9 @@ namespace SteamLobby
 
                 string playerName = SteamFriends.GetFriendPersonaName(member);
                 playerNameTexts[j].text = playerName;
-                Debug.Log("Player name: " + playerName);
                 j++;
             }
+            CheckAllPlayersReady();
         }
 
         public void OnPlayButtonClicked()
