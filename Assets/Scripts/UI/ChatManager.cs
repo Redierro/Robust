@@ -1,0 +1,57 @@
+using UnityEngine;
+using Mirror;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine.UI;
+using System.Collections;
+using Steamworks;
+
+namespace SteamLobby
+{
+    public class ChatManager : NetworkBehaviour
+    {
+        public static ChatManager Instance;
+
+        public TMP_InputField chatField;
+        public TMP_Text chatMessages;
+        public GameObject upperPanel;
+        public GameObject loweredPanel;
+
+        private void Awake()
+        {
+            Instance = this;
+        }
+
+        public void SendMessage()
+        {
+            string message = chatField.text.Trim();
+            if (!string.IsNullOrEmpty(message))
+            {
+                Debug.Log("Sent message: " + message);
+                var player = NetworkClient.localPlayer;
+                if (player != null)
+                {
+                    player.GetComponent<PlayerChat>().CmdSendMessage(SteamFriends.GetPersonaName() + ": " + message);
+                }
+                chatField.text = "";
+            }
+        }
+
+        public void ReceiveMessage(string message)
+        {
+            chatMessages.text += message + "\n";
+        }
+
+        public void LowerChat()
+        {
+            upperPanel.SetActive(false);
+            loweredPanel.SetActive(true);
+        }
+
+        public void UpperChat()
+        {
+            loweredPanel.SetActive(false);
+            upperPanel.SetActive(true);
+        }
+    }
+}
