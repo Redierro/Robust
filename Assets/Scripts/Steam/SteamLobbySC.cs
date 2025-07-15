@@ -106,6 +106,19 @@ namespace SteamLobby
                 StartCoroutine(DelayedNameUpdate(0.5f));
                 LobbyUIManager.Instance?.CheckAllPlayersReady();
             }
+
+            // Chat message that someone left
+            CSteamID changedMember = (CSteamID)callback.m_ulSteamIDUserChanged;
+            string playerName = SteamFriends.GetFriendPersonaName(changedMember);
+
+            if (stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeLeft) ||
+                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeDisconnected) ||
+                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeKicked))
+            {
+                Debug.Log(playerName + " has left the lobby.");
+
+                ChatManager.Instance?.ReceiveMessage($"<color=#ffaa00> {playerName} has left the lobby.");
+            }
         }
 
         private IEnumerator DelayedNameUpdate(float delay)

@@ -62,5 +62,16 @@ namespace SteamLobby
             yield return null; // Wait one frame
             chatField.ActivateInputField();
         }
+        [Server]
+        public void BroadcastServerMessage(string message)
+        {
+            RpcReceiveServerMessage($"<color=#ffaa00><b>Server:</b></color> {message}");
+        }
+
+        [ClientRpc]
+        void RpcReceiveServerMessage(string formattedMsg)
+        {
+            ReceiveMessage(formattedMsg);
+        }
     }
 }
