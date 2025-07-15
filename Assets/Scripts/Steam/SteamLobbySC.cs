@@ -165,7 +165,7 @@ namespace SteamLobby
             {
                 Debug.Log(playerName + " has left the lobby.");
 
-                ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#cc3366>has left the lobby.");
+                ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#cc3366>has left the lobby.<color>");
             }
 
             // Chat message that someone entered
@@ -173,7 +173,7 @@ namespace SteamLobby
             {
                 Debug.Log(playerName + " has joined the lobby.");
 
-                ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#44ff44>has joined the lobby.");
+                ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#44ff44>has joined the lobby.<color>");
             }
         }
     }
