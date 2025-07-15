@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 using Steamworks;
+using UnityEngine.EventSystems;
 
 namespace SteamLobby
 {
@@ -34,6 +35,9 @@ namespace SteamLobby
                     player.GetComponent<PlayerChat>().CmdSendMessage(SteamFriends.GetPersonaName() + ": " + message);
                 }
                 chatField.text = "";
+
+                // Refocus input field on the next frame
+                StartCoroutine(RefocusInputField());
             }
         }
 
@@ -52,6 +56,11 @@ namespace SteamLobby
         {
             loweredPanel.SetActive(false);
             upperPanel.SetActive(true);
+        }
+        private IEnumerator RefocusInputField()
+        {
+            yield return null; // Wait one frame
+            chatField.ActivateInputField();
         }
     }
 }

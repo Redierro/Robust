@@ -13,10 +13,10 @@ namespace SteamLobby
 
             // Make sure ChatManager is available
             if (ChatManager.Instance == null) return;
-
             // Check if chat field is focused and Enter is pressed
-            if (ChatManager.Instance.chatField.isFocused && Input.GetKeyDown(KeyCode.Return))
+            if (Input.GetKeyDown(KeyCode.Return))
             {
+                Debug.Log("Pressed enter!");
                 ChatManager.Instance.SendMessage();
             }
         }
