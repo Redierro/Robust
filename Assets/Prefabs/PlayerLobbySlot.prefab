@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.035202, y: 0.517601}
+  m_AnchoredPosition: {x: -1.0351868, y: 0.517601}
   m_SizeDelta: {x: -10.3528, y: -9.3175}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5256549462742122604
@@ -111,8 +111,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -100.674255, y: 0}
-  m_SizeDelta: {x: 172.6515, y: 50}
+  m_AnchoredPosition: {x: -148, y: 0.0000033379}
+  m_SizeDelta: {x: 251.567, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8981852455410041999
 CanvasRenderer:
@@ -242,8 +242,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 104.25305, y: 0}
-  m_SizeDelta: {x: 184.5061, y: 50}
+  m_AnchoredPosition: {x: 213.30951, y: 0.51761}
+  m_SizeDelta: {x: 385.9485, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &410565499185595786
 CanvasRenderer:
@@ -302,8 +302,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 25
+  m_fontSizeBase: 25
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -384,8 +384,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.00002861, y: 0.00001049}
-  m_SizeDelta: {x: 463.4387, y: 74.697}
+  m_AnchoredPosition: {x: -0.000030517, y: -0.000022888}
+  m_SizeDelta: {x: 784.6036, y: 190.8408}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8642538612859022758
 MonoBehaviour:
@@ -531,13 +531,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 5
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
