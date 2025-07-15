@@ -111,7 +111,7 @@ namespace SteamLobby
             // Only send chat message when all are ready and status changed
             if (readyCount == totalCount && readyCount != lastReadyCount)
             {
-                ChatManager.Instance?.BroadcastServerMessage("<color=#44ff44>All players are ready. You may start the game.</color>");
+                ChatManager.Instance?.BroadcastServerMessage("<color=#006400>All players are ready. You may start the game.</color>");
             }
 
             lastReadyCount = readyCount;
