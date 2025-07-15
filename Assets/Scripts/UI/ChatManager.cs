@@ -65,7 +65,7 @@ namespace SteamLobby
         [Server]
         public void BroadcastServerMessage(string message)
         {
-            RpcReceiveServerMessage($"<color=#ffaa00><b>Server:</b></color> {message}");
+            RpcReceiveServerMessage($"<color=#ffaa00></color>{message}");
         }
 
         [ClientRpc]

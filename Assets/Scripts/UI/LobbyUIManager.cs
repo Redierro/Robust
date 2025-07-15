@@ -16,6 +16,8 @@ namespace SteamLobby
         public List<PlayerLobbyHandler> playerLobbyHandlers = new List<PlayerLobbyHandler>();
         public Button playGameButton;
 
+        private int lastReadyCount = -1; // To avoid doubling of messages
+
         private void Awake()
         {
             if (Instance == null)
@@ -95,15 +97,24 @@ namespace SteamLobby
         [Server]
         public void CheckAllPlayersReady()
         {
+            int readyCount = 0;
+            int totalCount = playerLobbyHandlers.Count;
+
             foreach (var player in playerLobbyHandlers)
             {
-                if (!player.isReady)
-                {
-                    RpcSetPlayButtonInteractable(false);
-                    return;
-                }
+                if (player.isReady)
+                    readyCount++;
             }
-            RpcSetPlayButtonInteractable(true);
+
+            RpcSetPlayButtonInteractable(readyCount == totalCount);
+
+            // Only send chat message when all are ready and status changed
+            if (readyCount == totalCount && readyCount != lastReadyCount)
+            {
+                ChatManager.Instance?.BroadcastServerMessage("<color=#44ff44><b>Server:</b></color> All players are ready. You may start the game.");
+            }
+
+            lastReadyCount = readyCount;
         }
         [ClientRpc]
         void RpcSetPlayButtonInteractable(bool truthStatus)

@@ -100,25 +100,12 @@ namespace SteamLobby
                                 stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeDisconnected) ||
                                 stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeKicked) ||
                                 stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeBanned);
-
             if (shouldUpdate)
             {
                 StartCoroutine(DelayedNameUpdate(0.5f));
                 LobbyUIManager.Instance?.CheckAllPlayersReady();
             }
-
-            // Chat message that someone left
-            CSteamID changedMember = (CSteamID)callback.m_ulSteamIDUserChanged;
-            string playerName = SteamFriends.GetFriendPersonaName(changedMember);
-
-            if (stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeLeft) ||
-                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeDisconnected) ||
-                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeKicked))
-            {
-                Debug.Log(playerName + " has left the lobby.");
-
-                ChatManager.Instance?.ReceiveMessage($"<color=#ffaa00> {playerName} has left the lobby.");
-            }
+            ServerMessage(stateChange, callback);
         }
 
         private IEnumerator DelayedNameUpdate(float delay)
@@ -164,6 +151,30 @@ namespace SteamLobby
             panelSwapper.gameObject.SetActive(true);
             this.gameObject.SetActive(true);
             panelSwapper.SwapPanel("MainPanel");
+        }
+
+        public void ServerMessage(EChatMemberStateChange stateChange, LobbyChatUpdate_t callback)
+        {
+            // Chat message that someone left
+            CSteamID changedMember = (CSteamID)callback.m_ulSteamIDUserChanged;
+            string playerName = SteamFriends.GetFriendPersonaName(changedMember);
+
+            if (stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeLeft) ||
+                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeDisconnected) ||
+                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeKicked))
+            {
+                Debug.Log(playerName + " has left the lobby.");
+
+                ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#cc3366>has left the lobby.");
+            }
+
+            // Chat message that someone entered
+            if (stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeEntered))
+            {
+                Debug.Log(playerName + " has joined the lobby.");
+
+                ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#44ff44>has joined the lobby.");
+            }
         }
     }
 }
