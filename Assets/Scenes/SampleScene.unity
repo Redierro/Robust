@@ -258,6 +258,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  chatManager: {fileID: 970578434}
   hostButton: {fileID: 879599504}
   lobbyID: 0
   networkManager: {fileID: 153268113}

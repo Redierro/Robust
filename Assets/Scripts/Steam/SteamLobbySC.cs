@@ -9,6 +9,7 @@ namespace SteamLobby
     public class SteamLobbySC : NetworkBehaviour
     {
         public static SteamLobbySC Instance;
+        public ChatManager chatManager;
         public GameObject hostButton = null;
         public ulong lobbyID;
         public NetworkManager networkManager;
@@ -151,6 +152,9 @@ namespace SteamLobby
             panelSwapper.gameObject.SetActive(true);
             this.gameObject.SetActive(true);
             panelSwapper.SwapPanel("MainPanel");
+
+            chatManager.chatMessages.text = ""; // Clear text when joining the lobby so it doesnt transfer from another lobby 
+            Debug.Log("Clearing chat...");
         }
 
         public void ServerMessage(EChatMemberStateChange stateChange, LobbyChatUpdate_t callback)

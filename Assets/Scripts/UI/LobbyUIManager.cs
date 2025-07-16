@@ -113,7 +113,6 @@ namespace SteamLobby
             {
                 ChatManager.Instance?.BroadcastServerMessage("<color=#006400>All players are ready. You may start the game.</color>");
             }
-
             lastReadyCount = readyCount;
         }
         [ClientRpc]
