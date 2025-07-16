@@ -38,21 +38,26 @@ namespace SteamLobby
         {
             if (!isLocalPlayer)
             {
-                // Disable camera for non-local players
-                _rb = GetComponent<Rigidbody>();
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
+                // Disable camera and virtual camera for remote players
+                var unityCam = GetComponentInChildren<Camera>();
+                var cineCam = GetComponentInChildren<CinemachineCamera>();
+                var brain = unityCam?.GetComponent<CinemachineBrain>();
 
-                // Freeze rotation so Rigidbody doesn't tip over
-                _rb.freezeRotation = true;
-
-                var camComponent = GetComponentInChildren<CinemachineCamera>();
-                if (camComponent != null)
-                    camComponent.enabled = false;
+                if (unityCam) unityCam.enabled = false;
+                if (brain) brain.enabled = false;
+                if (cineCam) cineCam.enabled = false;
 
                 return;
             }
+
+            // Setup for local player
+            _rb = GetComponent<Rigidbody>();
+            _camera = GetComponentInChildren<CinemachineCamera>();
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            _rb.freezeRotation = true;
         }
+
 
         private void Update()
         {

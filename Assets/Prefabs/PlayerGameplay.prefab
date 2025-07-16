@@ -136,6 +136,8 @@ MonoBehaviour:
   walkSpeed: 5
   runSpeed: 10
   mouseSensitivity: 100
+  acceleration: 20
+  deceleration: 25
   jumpForce: 300
   groundLayer:
     serializedVersion: 2
@@ -326,11 +328,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 670afdbef06698b41aa68cb9ab2e2614, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   virtualCam: {fileID: 1576826539029111083}
   walkAmplitude: 1
   walkFrequency: 0.2
   runAmplitude: 1.7
   runFrequency: 0.3
+  shakeDamping: 5
 --- !u!1 &7939050873406404328
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,7 +491,7 @@ GameObject:
   - component: {fileID: 6132379140389878754}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
