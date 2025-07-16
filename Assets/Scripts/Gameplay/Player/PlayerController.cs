@@ -9,36 +9,34 @@ namespace SteamLobby
     public class PlayerController : NetworkBehaviour
     {
         private Rigidbody _rb;
-        private CinemachineCamera _camera;
 
+        [Header("Camera Rig")]
+        [SerializeField] private Transform cameraPivot; // Set this to CameraPivot in inspector
+        [SerializeField] private float rotationSmoothSpeed = 5f;
         private float xRotation = 0f;
 
-        [SerializeField] private float walkSpeed = 5f;
-        [SerializeField] private float runSpeed = 10f;
+        [Header("Camera")]
         [SerializeField] private float mouseSensitivity = 100f;
 
-        // Acceleration
-
+        [Header("Movement")]
+        [SerializeField] private float walkSpeed = 5f;
+        [SerializeField] private float runSpeed = 10f;
         [SerializeField] private float acceleration = 20f;
         [SerializeField] private float deceleration = 25f;
-
         private Vector3 currentVelocity = Vector3.zero;
-        public Vector3 CurrentVelocity => currentVelocity; // For the shake script.
+        public Vector3 CurrentVelocity => currentVelocity;
 
-        // Jumping
-
+        [Header("Jumping")]
         [SerializeField] private float jumpForce = 20f;
         [SerializeField] private LayerMask groundLayer;
         [SerializeField] private Transform groundCheck;
         [SerializeField] private float groundDistance = 0.2f;
-
         private bool isGrounded;
 
         private void Start()
         {
             if (!isLocalPlayer)
             {
-                // Disable camera and virtual camera for remote players
                 var unityCam = GetComponentInChildren<Camera>();
                 var cineCam = GetComponentInChildren<CinemachineCamera>();
                 var brain = unityCam?.GetComponent<CinemachineBrain>();
@@ -50,19 +48,15 @@ namespace SteamLobby
                 return;
             }
 
-            // Setup for local player
             _rb = GetComponent<Rigidbody>();
-            _camera = GetComponentInChildren<CinemachineCamera>();
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
             _rb.freezeRotation = true;
         }
 
-
         private void Update()
         {
-            if (!isLocalPlayer)
-                return;
+            if (!isLocalPlayer) return;
 
             HandleMovement();
             HandleMouseLook();
@@ -83,46 +77,36 @@ namespace SteamLobby
             float targetSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
             Vector3 targetVelocity = inputDir * targetSpeed;
 
-            // Blend toward target velocity for smooth acceleration/deceleration
-            if (inputDir.magnitude > 0)
-            {
-                currentVelocity = Vector3.MoveTowards(currentVelocity, targetVelocity, acceleration * Time.deltaTime);
-            }
-            else
-            {
-                currentVelocity = Vector3.MoveTowards(currentVelocity, Vector3.zero, deceleration * Time.deltaTime);
-            }
+            currentVelocity = Vector3.MoveTowards(currentVelocity, targetVelocity,
+                (inputDir.magnitude > 0 ? acceleration : deceleration) * Time.deltaTime);
 
             _rb.MovePosition(_rb.position + currentVelocity * Time.deltaTime);
-
-            Debug.Log("Current Velocity: " + currentVelocity.magnitude.ToString("F2"));
         }
 
         private void HandleJump()
         {
-            // Ground check using a small sphere at the player's feet
             isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayer);
 
             if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
             {
                 _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                Debug.Log("Jumped!");
             }
         }
-
 
         private void HandleMouseLook()
         {
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
             float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-            // Rotate player horizontally
+            // Horizontal rotation of player
             transform.Rotate(Vector3.up * mouseX);
 
-            // Rotate camera vertically
+            // Vertical rotation of camera pivot (with smoothing)
             xRotation -= mouseY;
             xRotation = Mathf.Clamp(xRotation, 0f, 45f);
-            _camera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
+            float currentX = Mathf.LerpAngle(cameraPivot.localEulerAngles.x, xRotation, Time.deltaTime * rotationSmoothSpeed);
+            cameraPivot.localRotation = Quaternion.Euler(currentX, 0f, 0f);
         }
     }
 }
