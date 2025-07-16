@@ -36,15 +36,22 @@ namespace SteamLobby
 
         private void Start()
         {
-            if (!isLocalPlayer) return;
-            _rb = GetComponent<Rigidbody>();
-            _camera = GetComponentInChildren<CinemachineCamera>();
+            if (!isLocalPlayer)
+            {
+                // Disable camera for non-local players
+                _rb = GetComponent<Rigidbody>();
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
 
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+                // Freeze rotation so Rigidbody doesn't tip over
+                _rb.freezeRotation = true;
 
-            // Freeze rotation so Rigidbody doesn't tip over
-            _rb.freezeRotation = true;
+                var camComponent = GetComponentInChildren<CinemachineCamera>();
+                if (camComponent != null)
+                    camComponent.enabled = false;
+
+                return;
+            }
         }
 
         private void Update()
