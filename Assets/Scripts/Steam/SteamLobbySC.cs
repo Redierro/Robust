@@ -23,7 +23,11 @@ namespace SteamLobby
 
         private void Awake()
         {
-            if (Instance == null) Instance = this;
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
             else if (Instance != this)
             {
                 Destroy(gameObject);
@@ -33,7 +37,7 @@ namespace SteamLobby
 
         private void Start()
         {
-            networkManager = GetComponent<NetworkManager>();
+            networkManager = NetworkManager.singleton;
             if (!SteamManager.Initialized)
             {
                 Debug.LogError("Steam is not initialized");
