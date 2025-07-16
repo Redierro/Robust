@@ -10,6 +10,7 @@ using Mirror;
 
 public class CustomNetworkManager : NetworkManager
 {
+    public GameObject playerGameplayPrefab; // Used when switching to gameplay
     // Overrides the base singleton so we don't
     // have to cast to this type everywhere.
     public static new CustomNetworkManager singleton => (CustomNetworkManager)NetworkManager.singleton;
@@ -86,6 +87,11 @@ public class CustomNetworkManager : NetworkManager
     /// <param name="newSceneName"></param>
     public override void ServerChangeScene(string newSceneName)
     {
+        if (newSceneName == "GameplayScene")
+        {
+            this.playerPrefab = playerGameplayPrefab;
+            this.onlineScene = newSceneName;
+        }
         base.ServerChangeScene(newSceneName);
     }
 
