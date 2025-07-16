@@ -1,7 +1,9 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using Mirror;
+using Steamworks;
 
-public class CameraShakeController : MonoBehaviour
+public class CameraShakeController : NetworkBehaviour
 {
     [SerializeField] private CinemachineCamera virtualCam;
     [SerializeField] private float walkAmplitude = 1f;
@@ -23,6 +25,7 @@ public class CameraShakeController : MonoBehaviour
 
     void Update()
     {
+        if (!isLocalPlayer) return;
         if (noise == null) return;
 
         bool isMoving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) ||
