@@ -17,16 +17,14 @@ namespace SteamLobby
 
         private void Start()
         {
+            if (!isLocalPlayer) return;
             _rb = GetComponent<Rigidbody>();
             _camera = GetComponentInChildren<Camera>();
 
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
 
-            if (!isLocalPlayer)
-            {
-                _camera.enabled = false;
-            }
+            _camera.enabled = false;
 
             // Freeze rotation so Rigidbody doesn't tip over
             _rb.freezeRotation = true;
