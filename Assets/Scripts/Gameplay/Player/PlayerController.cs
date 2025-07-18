@@ -103,7 +103,7 @@ namespace SteamLobby
 
             // Vertical rotation of camera pivot (with smoothing)
             xRotation -= mouseY;
-            xRotation = Mathf.Clamp(xRotation, 0f, 45f);
+            xRotation = Mathf.Clamp(xRotation, -45f, 45f);
 
             float currentX = Mathf.LerpAngle(cameraPivot.localEulerAngles.x, xRotation, Time.deltaTime * rotationSmoothSpeed);
             cameraPivot.localRotation = Quaternion.Euler(currentX, 0f, 0f);

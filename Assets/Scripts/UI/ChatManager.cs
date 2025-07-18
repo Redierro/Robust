@@ -32,7 +32,7 @@ namespace SteamLobby
                 var player = NetworkClient.localPlayer;
                 if (player != null)
                 {
-                    player.GetComponent<PlayerChat>().CmdSendMessage(SteamFriends.GetPersonaName() + ": " + message);
+                    player.GetComponent<PlayerChat>().CmdSendMessage($"<color=#3FA7F2>{SteamFriends.GetPersonaName()}</color>: " + message);
                 }
                 chatField.text = "";
 
