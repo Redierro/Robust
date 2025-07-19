@@ -15,6 +15,8 @@ namespace SteamLobby
 
         public TMP_InputField chatField;
         public TMP_Text chatMessages;
+        private int chatLeftLenght = 160;
+        public TMP_Text chatLeftLenghtText;
         public GameObject upperPanel;
         public GameObject loweredPanel;
 
@@ -22,7 +24,11 @@ namespace SteamLobby
         {
             Instance = this;
         }
-
+        private void Update()
+        {
+            chatLeftLenght = 160 - chatField.text.Trim().Length;
+            chatLeftLenghtText.text = chatLeftLenght.ToString();
+        }
         public void SendMessage()
         {
             string message = chatField.text.Trim();
