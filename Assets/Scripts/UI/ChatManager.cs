@@ -18,7 +18,7 @@ namespace SteamLobby
         private int chatLeftLenght = 160;
         public TMP_Text chatLeftLenghtText;
         public GameObject upperPanel;
-        public GameObject loweredPanel;
+        private bool upperPanelRaised = false;
 
         private void Awake()
         {
@@ -28,6 +28,7 @@ namespace SteamLobby
         {
             chatLeftLenght = 160 - chatField.text.Trim().Length;
             chatLeftLenghtText.text = chatLeftLenght.ToString();
+            ChatVisibility(upperPanelRaised);
         }
         public void SendMessage()
         {
@@ -46,22 +47,23 @@ namespace SteamLobby
                 StartCoroutine(RefocusInputField());
             }
         }
+        private void ChatVisibility(bool isRaised)
+        {
+            if (Input.GetKeyDown(KeyCode.Return) && !isRaised)
+            {
+                upperPanel.SetActive(true);
+                upperPanelRaised = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Escape) && isRaised)
+            {
+                upperPanel.SetActive(false);
+                upperPanelRaised = false;
+            }
+        }
 
         public void ReceiveMessage(string message)
         {
             chatMessages.text += message + "\n";
-        }
-
-        public void LowerChat()
-        {
-            upperPanel.SetActive(false);
-            loweredPanel.SetActive(true);
-        }
-
-        public void UpperChat()
-        {
-            loweredPanel.SetActive(false);
-            upperPanel.SetActive(true);
         }
         private IEnumerator RefocusInputField()
         {
