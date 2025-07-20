@@ -106,7 +106,10 @@ namespace SteamLobby
                     readyCount++;
             }
 
-            RpcSetPlayButtonInteractable(readyCount == totalCount);
+            if (this != null && isActiveAndEnabled) // Some error throw
+            {
+                RpcSetPlayButtonInteractable(readyCount == totalCount);
+            }
 
             // Only send chat message when all are ready and status changed
             if (readyCount == totalCount && readyCount != lastReadyCount)

@@ -39,9 +39,9 @@ public class CameraShakeController : NetworkBehaviour
         {
             if (noise == null) return;
 
-            isMoving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) ||
-                            Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D);
-            isRunning = Input.GetKey(KeyCode.LeftShift);
+            if (!(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))) { isMoving = false; isRunning = false; }
+            else if (this.GetComponentInParent<PlayerController>().targetSpeed == 4) { isMoving = true; isRunning = false; }
+            else if (this.GetComponentInParent<PlayerController>().targetSpeed == 8) { isRunning = true; isMoving = true; }
         }
 
         // Set target shake based on movement state

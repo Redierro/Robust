@@ -11,7 +11,7 @@ namespace SteamLobby
         private Rigidbody _rb;
 
         [Header("Camera Rig")]
-        [SerializeField] private Transform cameraPivot; // Set this to CameraPivot in inspector
+        [SerializeField] private Transform cameraPivot;
         [SerializeField] private float rotationSmoothSpeed = 5f;
         private float xRotation = 0f;
 
@@ -23,8 +23,11 @@ namespace SteamLobby
         [SerializeField] private float runSpeed = 10f;
         [SerializeField] private float acceleration = 20f;
         [SerializeField] private float deceleration = 25f;
+        public float targetSpeed;
+        private bool wasRunningOnJump = false;
         private Vector3 currentVelocity = Vector3.zero;
         public Vector3 CurrentVelocity => currentVelocity;
+
 
         [Header("Jumping")]
         [SerializeField] private float jumpForce = 20f;
@@ -56,6 +59,8 @@ namespace SteamLobby
 
         private void Update()
         {
+            Debug.Log("Running before jump: " + wasRunningOnJump);
+            Debug.Log("Target speed - " + targetSpeed + ", grounded? - " + isGrounded);
             if (!isLocalPlayer || ChatManager.Instance == null) return;
 
             if (ChatManager.Instance.upperPanelRaised) return; // Chat is open, block control
@@ -76,7 +81,15 @@ namespace SteamLobby
 
             inputDir.Normalize();
 
-            float targetSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+            if (isGrounded) // Check if theyre trying to change speed midair
+            {
+                targetSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+            }
+            else
+            {
+                targetSpeed = wasRunningOnJump ? runSpeed : walkSpeed;
+            }
+
             Vector3 targetVelocity = inputDir * targetSpeed;
 
             currentVelocity = Vector3.MoveTowards(currentVelocity, targetVelocity,
@@ -85,15 +98,21 @@ namespace SteamLobby
             _rb.MovePosition(_rb.position + currentVelocity * Time.deltaTime);
         }
 
+
         private void HandleJump()
         {
             isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayer);
 
             if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
             {
+                wasRunningOnJump = Input.GetKey(KeyCode.LeftShift); // Store run state
                 _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
+
+            // Reset flag when landing
+            if (isGrounded) wasRunningOnJump = false;
         }
+
 
         private void HandleMouseLook()
         {
