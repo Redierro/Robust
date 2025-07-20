@@ -43,10 +43,7 @@ namespace SteamLobby
             {
                 newMessageReceived = false;
 
-                // Restart fade timer
-                if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-                chatGroup.alpha = 1f;
-                fadeCoroutine = StartCoroutine(FadeChatAfterDelay());
+                StartFadeCoroutine();
             }
         }
 
@@ -88,6 +85,7 @@ namespace SteamLobby
             }
             else if (Input.GetKeyDown(KeyCode.Escape) && isRaised)
             {
+                StartFadeCoroutine(); // Left chat, fade the chat away
                 upperPanel.SetActive(false);
                 upperPanelRaised = false;
                 if (!(SceneManager.GetActiveScene().name == "SampleScene"))
@@ -97,7 +95,13 @@ namespace SteamLobby
                 }
             }
         }
-
+        private void StartFadeCoroutine()
+        {
+            // Restart fade timer
+            if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+            chatGroup.alpha = 1f;
+            fadeCoroutine = StartCoroutine(FadeChatAfterDelay());
+        }
         public void ReceiveMessage(string message)
         {
             chatMessages.text += message + "\n";
