@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System.Collections;
 using Steamworks;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 namespace SteamLobby
 {
@@ -18,7 +19,14 @@ namespace SteamLobby
         private int chatLeftLenght = 160;
         public TMP_Text chatLeftLenghtText;
         public GameObject upperPanel;
-        private bool upperPanelRaised = false;
+        public bool upperPanelRaised = false;
+        private bool newMessageReceived = false;
+
+        [SerializeField] private CanvasGroup chatGroup;
+        [SerializeField] private float fadeDelay = 5f;
+        [SerializeField] private float fadeDuration = 1.5f;
+
+        private Coroutine fadeCoroutine;
 
         private void Awake()
         {
@@ -29,7 +37,19 @@ namespace SteamLobby
             chatLeftLenght = 160 - chatField.text.Trim().Length;
             chatLeftLenghtText.text = chatLeftLenght.ToString();
             ChatVisibility(upperPanelRaised);
+
+            // Trigger fade only when chat is closed and message arrived
+            if (!upperPanelRaised && newMessageReceived)
+            {
+                newMessageReceived = false;
+
+                // Restart fade timer
+                if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+                chatGroup.alpha = 1f;
+                fadeCoroutine = StartCoroutine(FadeChatAfterDelay());
+            }
         }
+
         public void SendMessage()
         {
             string message = chatField.text.Trim();
@@ -51,19 +71,47 @@ namespace SteamLobby
         {
             if (Input.GetKeyDown(KeyCode.Return) && !isRaised)
             {
+                chatGroup.alpha = 1f; // Restore on hover
                 upperPanel.SetActive(true);
                 upperPanelRaised = true;
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+
+                // Activate input field focus
+                StartCoroutine(RefocusInputField());
             }
             else if (Input.GetKeyDown(KeyCode.Escape) && isRaised)
             {
                 upperPanel.SetActive(false);
                 upperPanelRaised = false;
+                if (!(SceneManager.GetActiveScene().name == "SampleScene"))
+                {
+                    Cursor.visible = false;
+                    Cursor.lockState = CursorLockMode.Locked;
+                }
             }
         }
 
         public void ReceiveMessage(string message)
         {
             chatMessages.text += message + "\n";
+            newMessageReceived = true;
+        }
+        public IEnumerator FadeChatAfterDelay()
+        {
+            yield return new WaitForSeconds(fadeDelay);
+
+            float elapsed = 0f;
+            float startAlpha = chatGroup.alpha;
+
+            while (elapsed < fadeDuration)
+            {
+                elapsed += Time.deltaTime;
+                chatGroup.alpha = Mathf.Lerp(startAlpha, 0f, elapsed / fadeDuration);
+                yield return null;
+            }
+
+            chatGroup.alpha = 0f;
         }
         private IEnumerator RefocusInputField()
         {

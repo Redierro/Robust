@@ -10,6 +10,7 @@ namespace SteamLobby
     {
         public static SteamLobbySC Instance;
         public ChatManager chatManager;
+        public GameObject UIManager;
         public GameObject hostButton = null;
         public ulong lobbyID;
         public NetworkManager networkManager;
@@ -52,6 +53,7 @@ namespace SteamLobby
         public void HostLobby()
         {
             SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, networkManager.maxConnections);
+            UIManager.SetActive(true);
         }
         public void OnLobbyCreated(LobbyCreated_t callback)
         {
@@ -159,6 +161,7 @@ namespace SteamLobby
 
             chatManager.chatMessages.text = ""; // Clear text when joining the lobby so it doesnt transfer from another lobby 
             Debug.Log("Clearing chat...");
+            UIManager.SetActive(false);
         }
 
         public void ServerMessage(EChatMemberStateChange stateChange, LobbyChatUpdate_t callback)

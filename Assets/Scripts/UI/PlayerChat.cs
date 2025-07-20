@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.SceneManagement;
 
 namespace SteamLobby
 {
@@ -13,10 +14,10 @@ namespace SteamLobby
 
             // Make sure ChatManager is available
             if (ChatManager.Instance == null) return;
-            // Check if chat field is focused and Enter is pressed
+            // Check if Enter is pressed
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                Debug.Log("Pressed enter!");
+                Debug.Log("Sent a message!");
                 ChatManager.Instance.SendMessage();
             }
         }
@@ -31,5 +32,6 @@ namespace SteamLobby
         {
             ChatManager.Instance.ReceiveMessage(message);
         }
+
     }
 }

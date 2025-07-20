@@ -2,7 +2,7 @@ using UnityEngine;
 using Unity.Cinemachine;
 using Mirror;
 using Steamworks;
-
+using SteamLobby;
 public class CameraShakeController : NetworkBehaviour
 {
     [SerializeField] private CinemachineCamera virtualCam;
@@ -18,6 +18,9 @@ public class CameraShakeController : NetworkBehaviour
     private float targetFrequency = 0f;
     private float currentFrequency = 0f;
 
+    bool isMoving = false;
+    bool isRunning = false;
+
     void Start()
     {
         noise = virtualCam.GetComponent<CinemachineBasicMultiChannelPerlin>();
@@ -25,12 +28,21 @@ public class CameraShakeController : NetworkBehaviour
 
     void Update()
     {
-        if (!isLocalPlayer) return;
-        if (noise == null) return;
+        if (!isLocalPlayer || ChatManager.Instance == null) return;
 
-        bool isMoving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) ||
-                        Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D);
-        bool isRunning = Input.GetKey(KeyCode.LeftShift);
+        if (ChatManager.Instance.upperPanelRaised)
+        {
+            isMoving = false;
+            isRunning = false;
+        } // Chat is open, block control
+        else
+        {
+            if (noise == null) return;
+
+            isMoving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) ||
+                            Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D);
+            isRunning = Input.GetKey(KeyCode.LeftShift);
+        }
 
         // Set target shake based on movement state
         if (isMoving)

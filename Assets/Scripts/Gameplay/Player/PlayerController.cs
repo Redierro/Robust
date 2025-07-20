@@ -56,7 +56,9 @@ namespace SteamLobby
 
         private void Update()
         {
-            if (!isLocalPlayer) return;
+            if (!isLocalPlayer || ChatManager.Instance == null) return;
+
+            if (ChatManager.Instance.upperPanelRaised) return; // Chat is open, block control
 
             HandleMovement();
             HandleMouseLook();
