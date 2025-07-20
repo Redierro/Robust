@@ -71,13 +71,19 @@ namespace SteamLobby
         {
             if (Input.GetKeyDown(KeyCode.Return) && !isRaised)
             {
-                chatGroup.alpha = 1f; // Restore on hover
+                // Cancel fade instantly
+                if (fadeCoroutine != null)
+                {
+                    StopCoroutine(fadeCoroutine);
+                    fadeCoroutine = null;
+                }
+                chatGroup.alpha = 1f;
+
                 upperPanel.SetActive(true);
                 upperPanelRaised = true;
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
 
-                // Activate input field focus
                 StartCoroutine(RefocusInputField());
             }
             else if (Input.GetKeyDown(KeyCode.Escape) && isRaised)
@@ -96,6 +102,7 @@ namespace SteamLobby
         {
             chatMessages.text += message + "\n";
             newMessageReceived = true;
+            chatGroup.alpha = 1f; // Restore on sent
         }
         public IEnumerator FadeChatAfterDelay()
         {
