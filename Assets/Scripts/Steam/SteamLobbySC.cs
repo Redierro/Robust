@@ -138,6 +138,7 @@ namespace SteamLobby
             {
                 CustomNetworkManager.singleton.ServerChangeScene("SampleScene");
             }
+
             CSteamID currentOwner = SteamMatchmaking.GetLobbyOwner(new CSteamID(lobbyID));
             CSteamID me = SteamUser.GetSteamID();
             var lobby = new CSteamID(lobbyID);
