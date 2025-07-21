@@ -286,7 +286,6 @@ public class CustomNetworkManager : NetworkManager
         yield return new WaitForSeconds(1f);
         SceneManager.LoadScene("LobbyScene");
         //OnDisconnectedPanel.SetActive(false);
-
     }
 
     #endregion
