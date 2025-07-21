@@ -222,6 +222,53 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &69501893
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 69501895}
+  - component: {fileID: 69501894}
+  m_Layer: 0
+  m_Name: PanelSwapper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &69501894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69501893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c8bb464a3e4b44eb0bc4413774011b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panels:
+  - {fileID: 1599185980}
+  - {fileID: 821731185}
+--- !u!4 &69501895
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69501893}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 869.1201, y: 572.81866, z: 3.3938622}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &153268106
 GameObject:
   m_ObjectHideFlags: 0
@@ -1746,7 +1793,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 970578432}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SteamLobby.PanelSwapper, Assembly-CSharp
         m_MethodName: SwapPanel
         m_Mode: 5
@@ -1841,12 +1888,12 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  chatManager: {fileID: 970578434}
-  UIManager: {fileID: 970578429}
+  chatManager: {fileID: 0}
+  UIManager: {fileID: 0}
   hostButton: {fileID: 879599504}
   lobbyID: 0
   networkManager: {fileID: 153268113}
-  panelSwapper: {fileID: 970578432}
+  panelSwapper: {fileID: 0}
 --- !u!114 &951484963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1888,17 +1935,16 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 970578433}
-  - component: {fileID: 970578432}
   - component: {fileID: 970578431}
-  - component: {fileID: 970578430}
   - component: {fileID: 970578434}
+  - component: {fileID: 970578430}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &970578430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1935,21 +1981,6 @@ MonoBehaviour:
   playerNameTexts: []
   playerLobbyHandlers: []
   playGameButton: {fileID: 1142627162}
---- !u!114 &970578432
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 970578429}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7c8bb464a3e4b44eb0bc4413774011b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  panels:
-  - {fileID: 1599185980}
-  - {fileID: 821731185}
 --- !u!4 &970578433
 Transform:
   m_ObjectHideFlags: 0
@@ -2456,7 +2487,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 970578431}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SteamLobby.LobbyUIManager, Assembly-CSharp
         m_MethodName: OnPlayButtonClicked
         m_Mode: 1
@@ -3159,6 +3190,7 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 153268112}
   - {fileID: 1718606691}
-  - {fileID: 34221482}
   - {fileID: 970578433}
+  - {fileID: 34221482}
   - {fileID: 951484964}
+  - {fileID: 69501895}

@@ -26,6 +26,7 @@ namespace SteamLobby
             }
             else if (Instance != this)
             {
+                Debug.LogError("Lobby UI Manager couldn't make an instance...");
                 Destroy(gameObject);
                 return;
             }

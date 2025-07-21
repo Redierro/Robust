@@ -10,12 +10,12 @@ namespace SteamLobby
     public class SteamLobbySC : NetworkBehaviour
     {
         public static SteamLobbySC Instance;
-        public ChatManager chatManager;
-        public GameObject UIManager;
-        public GameObject hostButton = null;
+        [SerializeField] private ChatManager chatManager;
+        [SerializeField] private GameObject UIManager;
+        [SerializeField] private GameObject hostButton = null;
         public ulong lobbyID;
-        public NetworkManager networkManager;
-        public PanelSwapper panelSwapper;
+        [SerializeField] private NetworkManager networkManager;
+        [SerializeField] private PanelSwapper panelSwapper;
         protected Callback<LobbyCreated_t> lobbyCreated;
         protected Callback<GameLobbyJoinRequested_t> gameLobbyJoinRequested;
         protected Callback<LobbyEnter_t> lobbyEntered;
@@ -45,7 +45,7 @@ namespace SteamLobby
                 Debug.LogError("Steam is not initialized");
                 return;
             }
-            panelSwapper.gameObject.SetActive(true);
+
             lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
             gameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
             lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
@@ -54,7 +54,14 @@ namespace SteamLobby
         public void HostLobby()
         {
             SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, networkManager.maxConnections);
-            UIManager.SetActive(true);
+            if (SceneManager.GetActiveScene().name == "SampleScene")
+            {
+                chatManager = ChatManager.Instance;
+                UIManager = GameObject.Find("UIManager");
+                panelSwapper = UIManager.GetComponent<PanelSwapper>();
+                hostButton = GameObject.Find("HostLobbyButton");
+            }
+            UIManager.GetComponent<ChatManager>().enabled = true;
         }
         public void OnLobbyCreated(LobbyCreated_t callback)
         {
@@ -162,7 +169,7 @@ namespace SteamLobby
                 this.gameObject.SetActive(true);
                 panelSwapper.SwapPanel("MainPanel");
 
-                UIManager.SetActive(false);
+                UIManager.GetComponent<ChatManager>().enabled = false; // So theres no opening chat while not in lobby
             }
             chatManager.chatMessages.text = ""; // Clear text when joining the lobby so it doesnt transfer from another lobby 
             Debug.Log("Clearing chat...");
