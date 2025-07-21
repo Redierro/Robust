@@ -331,6 +331,7 @@ MonoBehaviour:
   evaluationInterval: 3
   timeInterpolationGui: 0
   playerGameplayPrefab: {fileID: 4083961700272304663, guid: 8e80f452cadee704eadea54462a823ea, type: 3}
+  playerLobbyPrefab: {fileID: 7156508704601250604, guid: ca6670d6286b19f4a9e362380a8b5afa, type: 3}
 --- !u!1 &265440945
 GameObject:
   m_ObjectHideFlags: 0
@@ -1983,7 +1984,7 @@ MonoBehaviour:
   chatMessages: {fileID: 793935967}
   chatLeftLenghtText: {fileID: 1499247498}
   upperPanel: {fileID: 716772898}
-  upperPanelRaised: 0
+  chatRaised: 0
   chatGroup: {fileID: 265440950}
   fadeDelay: 5
   fadeDuration: 1.5

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Mirror;
 using System.Collections;
 using Steamworks;
+using UnityEngine.SceneManagement;
 
 namespace SteamLobby
 {
@@ -155,13 +156,16 @@ namespace SteamLobby
                 NetworkManager.singleton.StopClient();
             }
 
-            panelSwapper.gameObject.SetActive(true);
-            this.gameObject.SetActive(true);
-            panelSwapper.SwapPanel("MainPanel");
+            if (SceneManager.GetActiveScene().name == "SampleScene")
+            {
+                panelSwapper.gameObject.SetActive(true);
+                this.gameObject.SetActive(true);
+                panelSwapper.SwapPanel("MainPanel");
 
+                UIManager.SetActive(false);
+            }
             chatManager.chatMessages.text = ""; // Clear text when joining the lobby so it doesnt transfer from another lobby 
             Debug.Log("Clearing chat...");
-            UIManager.SetActive(false);
         }
 
         public void ServerMessage(EChatMemberStateChange stateChange, LobbyChatUpdate_t callback)
