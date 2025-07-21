@@ -19,7 +19,7 @@ namespace SteamLobby
         private int chatLeftLenght = 160;
         public TMP_Text chatLeftLenghtText;
         public GameObject upperPanel;
-        public bool upperPanelRaised = false;
+        public bool chatRaised = false;
         private bool newMessageReceived = false;
 
         [SerializeField] private CanvasGroup chatGroup;
@@ -36,10 +36,10 @@ namespace SteamLobby
         {
             chatLeftLenght = 160 - chatField.text.Trim().Length;
             chatLeftLenghtText.text = chatLeftLenght.ToString();
-            ChatVisibility(upperPanelRaised);
+            ChatVisibility();
 
             // Trigger fade only when chat is closed and message arrived
-            if (!upperPanelRaised && newMessageReceived)
+            if (!chatRaised && newMessageReceived)
             {
                 newMessageReceived = false;
 
@@ -56,7 +56,7 @@ namespace SteamLobby
                 var player = NetworkClient.localPlayer;
                 if (player != null)
                 {
-                    player.GetComponent<PlayerChat>().CmdSendMessage($"<color=#3FA7F2>{SteamFriends.GetPersonaName()}</color>: " + message);
+                    player.GetComponent<PlayerInputCatcher>().CmdSendMessage($"<color=#3FA7F2>{SteamFriends.GetPersonaName()}</color>: " + message);
                 }
                 chatField.text = "";
 
@@ -64,9 +64,9 @@ namespace SteamLobby
                 StartCoroutine(RefocusInputField());
             }
         }
-        private void ChatVisibility(bool isRaised)
+        private void ChatVisibility()
         {
-            if (Input.GetKeyDown(KeyCode.Return) && !isRaised)
+            if (Input.GetKeyDown(KeyCode.Return) && !chatRaised && !IngameUI.Instance.escapeRaised)
             {
                 // Cancel fade instantly
                 if (fadeCoroutine != null)
@@ -77,17 +77,17 @@ namespace SteamLobby
                 chatGroup.alpha = 1f;
 
                 upperPanel.SetActive(true);
-                upperPanelRaised = true;
+                chatRaised = true;
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
 
                 StartCoroutine(RefocusInputField());
             }
-            else if (Input.GetKeyDown(KeyCode.Escape) && isRaised)
+            else if (Input.GetKeyDown(KeyCode.Escape) && chatRaised)
             {
                 StartFadeCoroutine(); // Left chat, fade the chat away
                 upperPanel.SetActive(false);
-                upperPanelRaised = false;
+                chatRaised = false;
                 if (!(SceneManager.GetActiveScene().name == "SampleScene"))
                 {
                     Cursor.visible = false;

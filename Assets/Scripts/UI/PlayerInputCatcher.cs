@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 namespace SteamLobby
 {
-	public class PlayerChat : NetworkBehaviour
+	public class PlayerInputCatcher : NetworkBehaviour
 	{
         void Update()
         {
@@ -19,6 +19,15 @@ namespace SteamLobby
             {
                 Debug.Log("Sent a message!");
                 ChatManager.Instance.SendMessage();
+            }
+
+            // Make sure IngameUI is available
+            if (IngameUI.Instance == null) return;
+            // Check if escape is pressed
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Debug.Log("Opened the escape menu!");
+                IngameUI.Instance.OpenEscape();
             }
         }
         [Command]

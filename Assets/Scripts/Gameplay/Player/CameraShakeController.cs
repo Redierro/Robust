@@ -30,7 +30,7 @@ public class CameraShakeController : NetworkBehaviour
     {
         if (!isLocalPlayer || ChatManager.Instance == null) return;
 
-        if (ChatManager.Instance.upperPanelRaised)
+        if (ChatManager.Instance.chatRaised || IngameUI.Instance.escapeRaised)
         {
             isMoving = false;
             isRunning = false;

@@ -25,6 +25,7 @@ namespace SteamLobby
         [SerializeField] private float deceleration = 25f;
         public float targetSpeed;
         private bool wasRunningOnJump = false;
+        private Vector3 momentumVelocity = Vector3.zero;
         private Vector3 currentVelocity = Vector3.zero;
         public Vector3 CurrentVelocity => currentVelocity;
 
@@ -63,7 +64,7 @@ namespace SteamLobby
             Debug.Log("Target speed - " + targetSpeed + ", grounded? - " + isGrounded);
             if (!isLocalPlayer || ChatManager.Instance == null) return;
 
-            if (ChatManager.Instance.upperPanelRaised) return; // Chat is open, block control
+            if (ChatManager.Instance.chatRaised || IngameUI.Instance.escapeRaised) return; // Chat or option menu is open, block control
 
             HandleMovement();
             HandleMouseLook();
@@ -81,38 +82,44 @@ namespace SteamLobby
 
             inputDir.Normalize();
 
-            if (isGrounded) // Check if theyre trying to change speed midair
+            if (isGrounded)
             {
                 targetSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+
+                Vector3 targetVelocity = inputDir * targetSpeed;
+
+                currentVelocity = Vector3.MoveTowards(currentVelocity, targetVelocity,
+                    (inputDir.magnitude > 0 ? acceleration : deceleration) * Time.deltaTime);
+
+                momentumVelocity = currentVelocity; // Save grounded velocity
             }
             else
             {
-                targetSpeed = wasRunningOnJump ? runSpeed : walkSpeed;
+                // Lock in the momentum at the moment of jumping
+                currentVelocity = momentumVelocity;
             }
-
-            Vector3 targetVelocity = inputDir * targetSpeed;
-
-            currentVelocity = Vector3.MoveTowards(currentVelocity, targetVelocity,
-                (inputDir.magnitude > 0 ? acceleration : deceleration) * Time.deltaTime);
 
             _rb.MovePosition(_rb.position + currentVelocity * Time.deltaTime);
         }
-
-
         private void HandleJump()
         {
+            bool wasGrounded = isGrounded;
             isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayer);
 
             if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
             {
-                wasRunningOnJump = Input.GetKey(KeyCode.LeftShift); // Store run state
+                // Save momentum direction and speed at jump
+                wasRunningOnJump = Input.GetKey(KeyCode.LeftShift);
+                momentumVelocity = currentVelocity; // Lock in momentum
                 _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
 
-            // Reset flag when landing
-            if (isGrounded) wasRunningOnJump = false;
+            // Don't reset momentum immediately when grounded
+            if (wasGrounded == false && isGrounded)
+            {
+                wasRunningOnJump = false;
+            }
         }
-
 
         private void HandleMouseLook()
         {
