@@ -1793,7 +1793,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 69501894}
         m_TargetAssemblyTypeName: SteamLobby.PanelSwapper, Assembly-CSharp
         m_MethodName: SwapPanel
         m_Mode: 5
@@ -1888,12 +1888,11 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  chatManager: {fileID: 0}
-  UIManager: {fileID: 0}
+  chatManager: {fileID: 970578434}
   hostButton: {fileID: 879599504}
   lobbyID: 0
   networkManager: {fileID: 153268113}
-  panelSwapper: {fileID: 0}
+  panelSwapper: {fileID: 69501894}
 --- !u!114 &951484963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2487,7 +2486,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 970578431}
         m_TargetAssemblyTypeName: SteamLobby.LobbyUIManager, Assembly-CSharp
         m_MethodName: OnPlayButtonClicked
         m_Mode: 1

@@ -94,13 +94,13 @@ namespace SteamLobby
             {
                 this.playerPrefab = playerGameplayPrefab;
                 this.onlineScene = newSceneName;
-                base.ServerChangeScene(newSceneName);
             }
             else if (newSceneName == "SampleScene")
             {
                 this.playerPrefab = playerLobbyPrefab;
                 this.onlineScene = newSceneName;
             }
+            base.ServerChangeScene(newSceneName);
         }
 
         /// <summary>
