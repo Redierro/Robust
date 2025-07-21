@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Mirror;
+using System.Collections;
 
 /*
 	Documentation: https://mirror-networking.gitbook.io/docs/components/network-manager
@@ -201,7 +202,10 @@ public class CustomNetworkManager : NetworkManager
     /// Called on clients when disconnected from a server.
     /// <para>This is called on the client when it disconnects from the server. Override this function to decide what happens when the client disconnects.</para>
     /// </summary>
-    public override void OnClientDisconnect() { }
+    public override void OnClientDisconnect() {
+        base.OnClientDisconnect();
+        StartCoroutine(ShowDisconnectAndReturn());
+    }
 
     /// <summary>
     /// Called on clients when a servers tells the client it is no longer ready.
@@ -261,6 +265,29 @@ public class CustomNetworkManager : NetworkManager
     /// This is called when a client is stopped.
     /// </summary>
     public override void OnStopClient() { }
+
+    public void LeaveGameToLobby(string lobbySceneName = "SampleScene")
+    {
+        if (NetworkServer.active && NetworkClient.isConnected)
+        {
+            StopHost(); // host or server quitting
+        }
+        else if (NetworkClient.isConnected)
+        {
+            StopClient(); // client quitting
+        }
+
+        // Load lobby after disconnect
+        SceneManager.LoadScene(lobbySceneName);
+    }
+    private IEnumerator ShowDisconnectAndReturn()
+    {
+        //OnDisconnectedPanel.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene("LobbyScene");
+        //OnDisconnectedPanel.SetActive(false);
+
+    }
 
     #endregion
 }

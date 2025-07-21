@@ -25,5 +25,14 @@ namespace SteamLobby
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }
+        public void OnLeaveGamePressed()
+        {
+            if (CustomNetworkManager.singleton != null)
+            {
+                CustomNetworkManager.singleton.LeaveGameToLobby();
+            }
+        }
+
     }
+
 }

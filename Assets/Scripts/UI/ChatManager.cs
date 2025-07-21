@@ -13,7 +13,7 @@ namespace SteamLobby
     public class ChatManager : NetworkBehaviour
     {
         public static ChatManager Instance;
-
+        [Header("Chat Variables")]
         public TMP_InputField chatField;
         public TMP_Text chatMessages;
         private int chatLeftLenght = 160;
@@ -22,10 +22,10 @@ namespace SteamLobby
         public bool chatRaised = false;
         private bool newMessageReceived = false;
 
+        [Header("Chat FadeAway")]
         [SerializeField] private CanvasGroup chatGroup;
         [SerializeField] private float fadeDelay = 5f;
         [SerializeField] private float fadeDuration = 1.5f;
-
         private Coroutine fadeCoroutine;
 
         private void Awake()
@@ -129,6 +129,7 @@ namespace SteamLobby
             yield return null; // Wait one frame
             chatField.ActivateInputField();
         }
+
         [Server]
         public void BroadcastServerMessage(string message)
         {
