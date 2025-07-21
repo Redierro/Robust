@@ -37,6 +37,9 @@ namespace SteamLobby
         [SerializeField] private float groundDistance = 0.2f;
         private bool isGrounded;
 
+        [Header("ETC")]
+        public IngameUI igUI;
+
         private void Start()
         {
             if (!isLocalPlayer)
@@ -60,11 +63,9 @@ namespace SteamLobby
 
         private void Update()
         {
-            Debug.Log("Running before jump: " + wasRunningOnJump);
-            Debug.Log("Target speed - " + targetSpeed + ", grounded? - " + isGrounded);
             if (!isLocalPlayer || ChatManager.Instance == null) return;
 
-            if (ChatManager.Instance.chatRaised || IngameUI.Instance.escapeRaised) return; // Chat or option menu is open, block control
+            if (ChatManager.Instance.chatRaised || igUI.escapeRaised) return; // Chat or option menu is open, block control
 
             HandleMovement();
             HandleMouseLook();

@@ -7,6 +7,7 @@ namespace SteamLobby
 {
 	public class PlayerInputCatcher : NetworkBehaviour
 	{
+        public IngameUI igUI;
         void Update()
         {
             // Only the local player should detect input
@@ -21,13 +22,11 @@ namespace SteamLobby
                 ChatManager.Instance.SendMessage();
             }
 
-            // Make sure IngameUI is available
-            if (IngameUI.Instance == null) return;
             // Check if escape is pressed
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Escape) && !(SceneManager.GetActiveScene().name == "SampleScene"))
             {
                 Debug.Log("Opened the escape menu!");
-                IngameUI.Instance.OpenEscape();
+                igUI.OpenEscape();
             }
         }
         [Command]

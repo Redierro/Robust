@@ -66,7 +66,7 @@ namespace SteamLobby
         }
         private void ChatVisibility()
         {
-            if (Input.GetKeyDown(KeyCode.Return) && !chatRaised && !IngameUI.Instance.escapeRaised)
+            if (Input.GetKeyDown(KeyCode.Return) && !chatRaised)
             {
                 // Cancel fade instantly
                 if (fadeCoroutine != null)
@@ -106,7 +106,7 @@ namespace SteamLobby
         {
             chatMessages.text += message + "\n";
             newMessageReceived = true;
-            chatGroup.alpha = 1f; // Restore on sent
+            chatGroup.alpha = 1f; // Restore panel on sent
         }
         public IEnumerator FadeChatAfterDelay()
         {

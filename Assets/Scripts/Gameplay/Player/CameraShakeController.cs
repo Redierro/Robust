@@ -5,6 +5,7 @@ using Steamworks;
 using SteamLobby;
 public class CameraShakeController : NetworkBehaviour
 {
+    [Header("Shake values")]
     [SerializeField] private CinemachineCamera virtualCam;
     [SerializeField] private float walkAmplitude = 1f;
     [SerializeField] private float walkFrequency = 0.2f;
@@ -17,9 +18,11 @@ public class CameraShakeController : NetworkBehaviour
     private float currentAmplitude = 0f;
     private float targetFrequency = 0f;
     private float currentFrequency = 0f;
-
     bool isMoving = false;
     bool isRunning = false;
+
+    [Header("ETC")]
+    public IngameUI igUI;
 
     void Start()
     {
@@ -30,7 +33,7 @@ public class CameraShakeController : NetworkBehaviour
     {
         if (!isLocalPlayer || ChatManager.Instance == null) return;
 
-        if (ChatManager.Instance.chatRaised || IngameUI.Instance.escapeRaised)
+        if (ChatManager.Instance.chatRaised || igUI.escapeRaised)
         {
             isMoving = false;
             isRunning = false;
