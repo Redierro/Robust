@@ -28,7 +28,7 @@ namespace SteamLobby
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject);
+                //DontDestroyOnLoad(gameObject);
             }
             else if (Instance != this)
             {
@@ -44,6 +44,7 @@ namespace SteamLobby
 
         private void Start()
         {
+            Debug.Log("SteamLobby working in start");
             networkManager = NetworkManager.singleton;
             if (!SteamManager.Initialized)
             {
@@ -55,11 +56,10 @@ namespace SteamLobby
                 Debug.Log("Looking for components...");
                 chatManager = ChatManager.Instance;
                 panelSwapper = GameObject.Find("PanelSwapper").GetComponent<PanelSwapper>();
-                if (chatManager == null)
+                if (chatManager == null || panelSwapper == null)
                 {
                     Debug.LogError("Couldn't find the required components...");
                 }
-
             }
         }
         private void Update()
@@ -146,6 +146,7 @@ namespace SteamLobby
         {
             try
             {
+                Debug.Log("Attempting to leave lobby...");
                 CleanUpOnLeave();
                 // Leave Steam lobby
                 if (lobbyID != 0)
@@ -168,6 +169,7 @@ namespace SteamLobby
                 }
 
                 NetworkClient.Shutdown();
+                Debug.Log("Successfully left lobby and reset networking.");
             }
             catch (System.Exception ex)
             {
@@ -201,8 +203,6 @@ namespace SteamLobby
 
         private void CleanUpOnLeave()
         {
-            Debug.Log("Attempting to leave lobby...");
-
             chatManager.chatMessages.text = "";
             Debug.Log("Clearing chat messages.");
 
@@ -214,8 +214,6 @@ namespace SteamLobby
                 panelSwapper.SwapPanel("MainPanel");
                 ChatManager.Instance.enabled = false;
             }
-
-            Debug.Log("Successfully left lobby and reset networking.");
         }
     }
 }

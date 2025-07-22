@@ -16,7 +16,7 @@ namespace SteamLobby
         public List<PlayerLobbyHandler> playerLobbyHandlers = new List<PlayerLobbyHandler>();
         public Button playGameButton;
 
-        private int lastReadyCount = -1; // To avoid doubling of messages
+        private int lastReadyCount = -1;
 
         private void Awake()
         {

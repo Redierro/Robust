@@ -50,6 +50,14 @@ namespace SteamLobby
             base.LateUpdate();
         }
 
+        private void Update()
+        {
+            if (SteamLobbySC.Instance.gameObject.activeSelf == false) // To constantly keep steamlobby script running
+            {
+                SteamLobbySC.Instance.gameObject.SetActive(true);
+            }
+        }
+
         /// <summary>
         /// Runs on both Server and Client
         /// </summary>
