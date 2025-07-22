@@ -58,17 +58,6 @@ namespace SteamLobby
         public void HostLobby()
         {
             Debug.Log("Trying to host...");
-            if (SceneManager.GetActiveScene().name == "SampleScene") // Grab necessary comps to activate
-            {
-                Debug.Log("Looking for components...");
-                chatManager = ChatManager.Instance;
-                panelSwapper = GameObject.Find("PanelSwapper").GetComponent<PanelSwapper>();
-                if (chatManager == null)
-                {
-                    Debug.LogError("Couldn't find the required components...");
-                }
-
-            }
             SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, networkManager.maxConnections);
             ChatManager.Instance.enabled = true;
         }
