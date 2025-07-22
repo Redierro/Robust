@@ -90,6 +90,7 @@ namespace SteamLobby
         /// <param name="newSceneName"></param>
         public override void ServerChangeScene(string newSceneName)
         {
+            Debug.Log("Changed server scene to - " + newSceneName);
             if (newSceneName == "GameplayScene")
             {
                 this.playerPrefab = playerGameplayPrefab;
@@ -280,15 +281,13 @@ namespace SteamLobby
 
         public void LeaveGameToLobby(string lobbySceneName = "SampleScene")
         {
+            ServerChangeScene(lobbySceneName);
             SteamLobbySC.Instance.LeaveLobby();
-
-            // Load lobby after disconnect
-            SceneManager.LoadScene(lobbySceneName);
         }
         private IEnumerator ShowDisconnectAndReturn()
         {
             GlobalUIManager.Instance.OnDisconnectedPanel.SetActive(true);
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(0.1f);
             SceneManager.LoadScene("SampleScene");
         }
 

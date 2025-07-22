@@ -4,14 +4,15 @@ using Mirror;
 using System.Collections;
 using Steamworks;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace SteamLobby
 {
     public class SteamLobbySC : NetworkBehaviour
     {
         public static SteamLobbySC Instance;
+
         [SerializeField] private ChatManager chatManager;
-        [SerializeField] private GameObject hostButton = null;
         public ulong lobbyID;
         [SerializeField] private NetworkManager networkManager;
         [SerializeField] private PanelSwapper panelSwapper;
@@ -27,13 +28,18 @@ namespace SteamLobby
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject);
+                //DontDestroyOnLoad(this.gameObject);
             }
             else if (Instance != this)
             {
                 Destroy(gameObject);
                 return;
             }
+
+            lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
+            gameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
+            lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
+            lobbyChatUpdate = Callback<LobbyChatUpdate_t>.Create(OnLobbyChatUpdate);
         }
 
         private void Start()
@@ -44,20 +50,25 @@ namespace SteamLobby
                 Debug.LogError("Steam is not initialized");
                 return;
             }
-            if (SceneManager.GetActiveScene().name == "SampleScene")
-            {
-                chatManager = ChatManager.Instance;
-                panelSwapper = GameObject.Find("PanelSwapper").GetComponent<PanelSwapper>();
-                hostButton = GameObject.Find("HostLobbyButton");
-            }
-
-            lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
-            gameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
-            lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
-            lobbyChatUpdate = Callback<LobbyChatUpdate_t>.Create(OnLobbyChatUpdate);
+        }
+        private void Update()
+        {
+            Debug.LogError("I AM WORKING!");
         }
         public void HostLobby()
         {
+            Debug.Log("Trying to host...");
+            if (SceneManager.GetActiveScene().name == "SampleScene") // Grab necessary comps to activate
+            {
+                Debug.Log("Looking for components...");
+                chatManager = ChatManager.Instance;
+                panelSwapper = GameObject.Find("PanelSwapper").GetComponent<PanelSwapper>();
+                if (chatManager == null)
+                {
+                    Debug.LogError("Couldn't find the required components...");
+                }
+
+            }
             SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, networkManager.maxConnections);
             ChatManager.Instance.enabled = true;
         }
@@ -131,51 +142,37 @@ namespace SteamLobby
             yield return new WaitForSeconds(delay);
             LobbyUIManager.Instance?.UpdatePlayerLobbyUI();
         }
-
         public void LeaveLobby()
         {
-            if (NetworkServer.active && SceneManager.GetActiveScene().name == "GameplayScene")
+            try
             {
-                CustomNetworkManager.singleton.ServerChangeScene("SampleScene");
+                CleanUpOnLeave();
+                // Leave Steam lobby
+                if (lobbyID != 0)
+                {
+                    Debug.Log($"Leaving Steam lobby with ID: {lobbyID}");
+                    SteamMatchmaking.LeaveLobby(new CSteamID(lobbyID));
+                    lobbyID = 0;
+                }
+
+                // Disconnect networking
+                if (NetworkServer.active)
+                {
+                    Debug.Log("Stopping Host...");
+                    NetworkManager.singleton.StopHost();
+                }
+                else if (NetworkClient.isConnected)
+                {
+                    Debug.Log("Stopping Client...");
+                    NetworkManager.singleton.StopClient();
+                }
+
+                NetworkClient.Shutdown();
             }
-
-            CSteamID currentOwner = SteamMatchmaking.GetLobbyOwner(new CSteamID(lobbyID));
-            CSteamID me = SteamUser.GetSteamID();
-            var lobby = new CSteamID(lobbyID);
-            List<CSteamID> members = new List<CSteamID>();
-
-            int count = SteamMatchmaking.GetNumLobbyMembers(lobby);
-
-            for (int i = 0; i < count; i++)
+            catch (System.Exception ex)
             {
-                members.Add(SteamMatchmaking.GetLobbyMemberByIndex(lobby, i));
+                Debug.LogError("Error during LeaveLobby: " + ex);
             }
-
-            if (lobbyID != 0)
-            {
-                SteamMatchmaking.LeaveLobby(new CSteamID(lobbyID));
-                lobbyID = 0;
-            }
-
-            if (NetworkServer.active && currentOwner == me) // IF host, stop hosting
-            {
-                NetworkManager.singleton.StopHost();
-            }
-            else if (NetworkClient.isConnected) // IF client, stop connection
-            {
-                NetworkManager.singleton.StopClient(); 
-            }
-
-            if (SceneManager.GetActiveScene().name == "SampleScene")
-            {
-                panelSwapper.gameObject.SetActive(true);
-                this.gameObject.SetActive(true);
-                panelSwapper.SwapPanel("MainPanel");
-
-                ChatManager.Instance.enabled = false; // So theres no opening chat while not in lobby
-            }
-            chatManager.chatMessages.text = ""; // Clear text when joining the lobby so it doesnt transfer from another lobby 
-            Debug.Log("Clearing chat...");
         }
 
         public void ServerMessage(EChatMemberStateChange stateChange, LobbyChatUpdate_t callback)
@@ -200,6 +197,25 @@ namespace SteamLobby
 
                 ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#006400>has joined the lobby.</color>");
             }
+        }
+
+        private void CleanUpOnLeave()
+        {
+            Debug.Log("Attempting to leave lobby...");
+
+            chatManager.chatMessages.text = "";
+            Debug.Log("Clearing chat messages.");
+
+            // Reset UI
+            if (SceneManager.GetActiveScene().name == "SampleScene")
+            {
+                panelSwapper.gameObject.SetActive(true);
+                this.gameObject.SetActive(true);
+                panelSwapper.SwapPanel("MainPanel");
+                ChatManager.Instance.enabled = false;
+            }
+
+            Debug.Log("Successfully left lobby and reset networking.");
         }
     }
 }

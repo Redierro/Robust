@@ -1864,8 +1864,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 951484964}
-  - component: {fileID: 951484963}
   - component: {fileID: 951484962}
+  - component: {fileID: 951484963}
   m_Layer: 0
   m_Name: SteamLobbyManager
   m_TagString: Untagged
@@ -1888,11 +1888,13 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  chatManager: {fileID: 970578434}
-  hostButton: {fileID: 879599504}
+  playButton: {fileID: 1142627162}
+  leaveButton: {fileID: 1141134111}
+  hostButton: {fileID: 0}
+  chatManager: {fileID: 0}
   lobbyID: 0
   networkManager: {fileID: 153268113}
-  panelSwapper: {fileID: 69501894}
+  panelSwapper: {fileID: 0}
 --- !u!114 &951484963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1918,7 +1920,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 951484961}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 960, y: 540, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3187,9 +3189,9 @@ SceneRoots:
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
-  - {fileID: 153268112}
   - {fileID: 1718606691}
   - {fileID: 970578433}
   - {fileID: 34221482}
+  - {fileID: 153268112}
   - {fileID: 951484964}
   - {fileID: 69501895}
