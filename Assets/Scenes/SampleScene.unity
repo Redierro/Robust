@@ -1888,13 +1888,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  playButton: {fileID: 1142627162}
-  leaveButton: {fileID: 1141134111}
-  hostButton: {fileID: 0}
-  chatManager: {fileID: 0}
+  chatManager: {fileID: 970578434}
   lobbyID: 0
   networkManager: {fileID: 153268113}
-  panelSwapper: {fileID: 0}
+  panelSwapper: {fileID: 69501894}
 --- !u!114 &951484963
 MonoBehaviour:
   m_ObjectHideFlags: 0
