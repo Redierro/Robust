@@ -28,7 +28,6 @@ namespace SteamLobby
             if (Instance == null)
             {
                 Instance = this;
-                //DontDestroyOnLoad(gameObject);
             }
             else if (Instance != this)
             {
@@ -61,10 +60,6 @@ namespace SteamLobby
                     Debug.LogError("Couldn't find the required components...");
                 }
             }
-        }
-        private void Update()
-        {
-            Debug.LogError("I AM WORKING!");
         }
         public void HostLobby()
         {

@@ -5668,7 +5668,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  chatManager: {fileID: 0}
+  chatManager: {fileID: 376947414}
   lobbyID: 0
   networkManager: {fileID: 0}
   panelSwapper: {fileID: 0}
