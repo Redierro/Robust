@@ -28,13 +28,18 @@ namespace SteamLobby
             if (Instance == null)
             {
                 Instance = this;
-                //DontDestroyOnLoad(this.gameObject);
+                DontDestroyOnLoad(this.gameObject);
             }
             else if (Instance != this)
             {
                 Destroy(gameObject);
                 return;
             }
+
+            lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
+            gameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
+            lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
+            lobbyChatUpdate = Callback<LobbyChatUpdate_t>.Create(OnLobbyChatUpdate);
         }
 
         private void Start()
@@ -45,10 +50,17 @@ namespace SteamLobby
                 Debug.LogError("Steam is not initialized");
                 return;
             }
-            lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
-            gameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
-            lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
-            lobbyChatUpdate = Callback<LobbyChatUpdate_t>.Create(OnLobbyChatUpdate);
+            /*if (SceneManager.GetActiveScene().name == "SampleScene") // Grab necessary comps to activate
+            {
+                Debug.Log("Looking for components...");
+                chatManager = ChatManager.Instance;
+                panelSwapper = GameObject.Find("PanelSwapper").GetComponent<PanelSwapper>();
+                if (chatManager == null)
+                {
+                    Debug.LogError("Couldn't find the required components...");
+                }
+
+            }*/
         }
         private void Update()
         {
