@@ -50,7 +50,7 @@ namespace SteamLobby
                 Debug.LogError("Steam is not initialized");
                 return;
             }
-            /*if (SceneManager.GetActiveScene().name == "SampleScene") // Grab necessary comps to activate
+            if (SceneManager.GetActiveScene().name == "SampleScene") // Grab necessary comps to activate
             {
                 Debug.Log("Looking for components...");
                 chatManager = ChatManager.Instance;
@@ -60,7 +60,7 @@ namespace SteamLobby
                     Debug.LogError("Couldn't find the required components...");
                 }
 
-            }*/
+            }
         }
         private void Update()
         {

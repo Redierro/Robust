@@ -266,8 +266,7 @@ namespace SteamLobby
         /// <summary>
         /// This is called when a host is stopped.
         /// </summary>
-        public override void OnStopHost() {
-        }
+        public override void OnStopHost() { }
 
         /// <summary>
         /// This is called when a server is stopped - including when a host is stopped.
