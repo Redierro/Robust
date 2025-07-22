@@ -28,7 +28,7 @@ namespace SteamLobby
             if (Instance == null)
             {
                 Instance = this;
-                //DontDestroyOnLoad(this.gameObject);
+                DontDestroyOnLoad(gameObject);
             }
             else if (Instance != this)
             {
