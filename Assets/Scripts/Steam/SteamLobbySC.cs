@@ -34,11 +34,6 @@ namespace SteamLobby
                 Destroy(gameObject);
                 return;
             }
-
-            lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
-            gameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
-            lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
-            lobbyChatUpdate = Callback<LobbyChatUpdate_t>.Create(OnLobbyChatUpdate);
         }
 
         private void Start()
@@ -60,6 +55,11 @@ namespace SteamLobby
                     Debug.LogError("Couldn't find the required components...");
                 }
             }
+
+            lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
+            gameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
+            lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
+            lobbyChatUpdate = Callback<LobbyChatUpdate_t>.Create(OnChatUpdate);
         }
         public void HostLobby()
         {
@@ -107,7 +107,7 @@ namespace SteamLobby
             networkManager.StartClient();
             panelSwapper.SwapPanel("LobbyPanel");
         }
-        void OnLobbyChatUpdate(LobbyChatUpdate_t callback)
+        void OnChatUpdate(LobbyChatUpdate_t callback)
         {
             if (callback.m_ulSteamIDLobby != lobbyID) return;
 
@@ -139,37 +139,30 @@ namespace SteamLobby
         }
         public void LeaveLobby()
         {
-            try
+            Debug.Log("Attempting to leave lobby...");
+            CleanUpOnLeave();
+            // Leave Steam lobby
+            if (lobbyID != 0)
             {
-                Debug.Log("Attempting to leave lobby...");
-                CleanUpOnLeave();
-                // Leave Steam lobby
-                if (lobbyID != 0)
-                {
-                    Debug.Log($"Leaving Steam lobby with ID: {lobbyID}");
-                    SteamMatchmaking.LeaveLobby(new CSteamID(lobbyID));
-                    lobbyID = 0;
-                }
-
-                // Disconnect networking
-                if (NetworkServer.active)
-                {
-                    Debug.Log("Stopping Host...");
-                    NetworkManager.singleton.StopHost();
-                }
-                else if (NetworkClient.isConnected)
-                {
-                    Debug.Log("Stopping Client...");
-                    NetworkManager.singleton.StopClient();
-                }
-
-                NetworkClient.Shutdown();
-                Debug.Log("Successfully left lobby and reset networking.");
+                Debug.Log($"Leaving Steam lobby with ID: {lobbyID}");
+                SteamMatchmaking.LeaveLobby(new CSteamID(lobbyID));
+                lobbyID = 0;
             }
-            catch (System.Exception ex)
+
+            // Disconnect networking
+            if (NetworkServer.active)
             {
-                Debug.LogError("Error during LeaveLobby: " + ex);
+                Debug.Log("Stopping Host...");
+                NetworkManager.singleton.StopHost();
             }
+            else if (NetworkClient.isConnected)
+            {
+                Debug.Log("Stopping Client...");
+                NetworkManager.singleton.StopClient();
+            }
+
+            NetworkClient.Shutdown();
+            Debug.Log("Successfully left lobby and reset networking.");
         }
 
         public void ServerMessage(EChatMemberStateChange stateChange, LobbyChatUpdate_t callback)
@@ -183,7 +176,7 @@ namespace SteamLobby
                 stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeKicked))
             {
                 Debug.Log(playerName + " has left the lobby.");
-
+                Debug.LogError("Tried sending a leave lobby message");
                 ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#8B0000>has left the lobby.</color>");
             }
 
