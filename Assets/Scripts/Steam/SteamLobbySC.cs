@@ -55,7 +55,10 @@ namespace SteamLobby
                     Debug.LogError("Couldn't find the required components...");
                 }
             }
-
+            RegisterSteamCallbacks();
+        }
+        public void RegisterSteamCallbacks()
+        {
             lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
             gameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
             lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
@@ -126,7 +129,29 @@ namespace SteamLobby
             }
             ServerMessage(stateChange, callback);
         }
+        public void ServerMessage(EChatMemberStateChange stateChange, LobbyChatUpdate_t callback)
+        {
+            // Chat message that someone left
+            CSteamID changedMember = (CSteamID)callback.m_ulSteamIDUserChanged;
+            string playerName = SteamFriends.GetFriendPersonaName(changedMember);
 
+            if (stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeLeft) ||
+                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeDisconnected) ||
+                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeKicked))
+            {
+                Debug.Log(playerName + " has left the lobby.");
+                Debug.LogError("Tried sending a leave lobby message");
+                ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#8B0000>has left the lobby.</color>");
+            }
+
+            // Chat message that someone entered
+            if (stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeEntered))
+            {
+                Debug.Log(playerName + " has joined the lobby.");
+
+                ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#006400>has joined the lobby.</color>");
+            }
+        }
         private IEnumerator DelayedNameUpdate(float delay)
         {
             if (LobbyUIManager.Instance == null)
@@ -164,31 +189,6 @@ namespace SteamLobby
             NetworkClient.Shutdown();
             Debug.Log("Successfully left lobby and reset networking.");
         }
-
-        public void ServerMessage(EChatMemberStateChange stateChange, LobbyChatUpdate_t callback)
-        {
-            // Chat message that someone left
-            CSteamID changedMember = (CSteamID)callback.m_ulSteamIDUserChanged;
-            string playerName = SteamFriends.GetFriendPersonaName(changedMember);
-
-            if (stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeLeft) ||
-                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeDisconnected) ||
-                stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeKicked))
-            {
-                Debug.Log(playerName + " has left the lobby.");
-                Debug.LogError("Tried sending a leave lobby message");
-                ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#8B0000>has left the lobby.</color>");
-            }
-
-            // Chat message that someone entered
-            if (stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeEntered))
-            {
-                Debug.Log(playerName + " has joined the lobby.");
-
-                ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#006400>has joined the lobby.</color>");
-            }
-        }
-
         private void CleanUpOnLeave()
         {
             chatManager.chatMessages.text = "";

@@ -988,7 +988,6 @@ GameObject:
   - component: {fileID: 376947413}
   - component: {fileID: 376947414}
   - component: {fileID: 376947415}
-  - component: {fileID: 376947416}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -1067,25 +1066,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   OnDisconnectedPanel: {fileID: 1193307079}
---- !u!114 &376947416
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 376947411}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ca55cf0ce7238f458c05e0e3c923e6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  playerListParent: {fileID: 0}
-  playerNameTexts: []
-  playerLobbyHandlers: []
-  playGameButton: {fileID: 0}
 --- !u!1 &438374658
 GameObject:
   m_ObjectHideFlags: 0
