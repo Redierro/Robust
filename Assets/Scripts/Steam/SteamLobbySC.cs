@@ -66,7 +66,6 @@ namespace SteamLobby
             Debug.Log("Trying to host...");
             SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, networkManager.maxConnections);
             RegisterSteamCallbacks();
-            ChatManager.Instance.accesible = true;
         }
         public void OnLobbyCreated(LobbyCreated_t callback)
         {
@@ -84,6 +83,7 @@ namespace SteamLobby
         }
         void OnLobbyEntered(LobbyEnter_t callback)
         {
+            ChatManager.Instance.accesible = true;
             if (NetworkServer.active)
             {
                 Debug.Log("Already in a lobby as a host. Ignoring request.");

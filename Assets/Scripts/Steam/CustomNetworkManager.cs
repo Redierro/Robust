@@ -217,6 +217,10 @@ namespace SteamLobby
             {
                 StartCoroutine(ShowDisconnectAndReturn());
             }
+            if (SteamLobbySC.Instance != null)
+            {
+                SteamLobbySC.Instance.LeaveLobby(); // Steam leaves too
+            }
         }
 
         /// <summary>
