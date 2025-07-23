@@ -7,7 +7,6 @@ namespace SteamLobby
     {
         public void StartServer()
         {
-            NetworkManager.singleton.StartHost();
             SteamLobbySC.Instance.gameObject.SetActive(true); // Reactivate if disabled
             SteamLobbySC.Instance.HostLobby(); // Begin Steam lobby setup
         }

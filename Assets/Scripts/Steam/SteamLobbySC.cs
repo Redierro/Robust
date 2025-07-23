@@ -46,6 +46,7 @@ namespace SteamLobby
                 Debug.LogError("Steam is not initialized");
                 return;
             }
+            RegisterSteamCallbacks();
         }
         public void RegisterSteamCallbacks()
         {
@@ -57,9 +58,9 @@ namespace SteamLobby
         public void HostLobby()
         {
             RehookSceneReferences();
-            RegisterSteamCallbacks();
             Debug.Log("Trying to host...");
             SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, networkManager.maxConnections);
+            RegisterSteamCallbacks();
             ChatManager.Instance.accesible = true;
         }
         public void OnLobbyCreated(LobbyCreated_t callback)
@@ -76,18 +77,6 @@ namespace SteamLobby
             SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey, SteamUser.GetSteamID().ToString());
             lobbyID = callback.m_ulSteamIDLobby;
         }
-        void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback)
-        {
-            Debug.Log("Join request received for lobby: " + callback.m_steamIDLobby);
-
-            if (NetworkClient.isConnected || NetworkClient.active)
-            {
-                Debug.Log("NetworkClient is active or connected. Disconnecting before joining new lobby.");
-                NetworkManager.singleton.StopClient();
-                NetworkClient.Shutdown();
-            }
-            SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
-        }
         void OnLobbyEntered(LobbyEnter_t callback)
         {
             if (NetworkServer.active)
@@ -101,6 +90,19 @@ namespace SteamLobby
             Debug.Log("Entered lobby: " + callback.m_ulSteamIDLobby);
             networkManager.StartClient();
             panelSwapper.SwapPanel("LobbyPanel");
+            LobbyUIManager.Instance?.UpdatePlayerLobbyUI();
+        }
+        void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback)
+        {
+            Debug.Log("Join request received for lobby: " + callback.m_steamIDLobby);
+
+            if (NetworkClient.isConnected || NetworkClient.active)
+            {
+                Debug.Log("NetworkClient is active or connected. Disconnecting before joining new lobby.");
+                NetworkManager.singleton.StopClient();
+                NetworkClient.Shutdown();
+            }
+            SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
         }
         void OnChatUpdate(LobbyChatUpdate_t callback)
         {
