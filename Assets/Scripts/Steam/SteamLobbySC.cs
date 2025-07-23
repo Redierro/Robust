@@ -160,11 +160,6 @@ namespace SteamLobby
             yield return new WaitForSeconds(delay);
             LobbyUIManager.Instance?.UpdatePlayerLobbyUI();
         }
-        public override void OnStopClient()
-        {
-            Debug.Log("Disconnected from host — leaving Steam lobby.");
-            LeaveLobby(); // Will trigger SteamMatchmaking.LeaveLobby(...)
-        }
         public void LeaveLobby()
         {
             lobbyCreated?.Unregister();

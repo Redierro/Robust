@@ -276,7 +276,15 @@ namespace SteamLobby
         /// <summary>
         /// This is called when a client is stopped.
         /// </summary>
-        public override void OnStopClient() { }
+        public override void OnStopClient()
+        {
+            base.OnStopClient();
+            Debug.Log("Client disconnected — leaving Steam lobby.");
+
+            if (SteamLobbySC.Instance != null)
+                SteamLobbySC.Instance.LeaveLobby();
+        }
+
 
         public void LeaveGameToLobby(string lobbySceneName = "SampleScene")
         {
