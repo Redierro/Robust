@@ -139,7 +139,6 @@ namespace SteamLobby
                 stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeKicked))
             {
                 Debug.Log(playerName + " has left the lobby.");
-                Debug.LogError("Tried sending a leave lobby message");
                 ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#8B0000>has left the lobby.</color>");
             }
 
