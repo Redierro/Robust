@@ -168,6 +168,9 @@ namespace SteamLobby
             lobbyChatUpdate?.Unregister();
             steamCallbacksRegistered = false;
 
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+
             Debug.Log("Attempting to leave lobby...");
             CleanUpOnLeave();
             // Leave Steam lobby

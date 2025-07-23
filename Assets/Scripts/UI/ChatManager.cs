@@ -89,7 +89,7 @@ namespace SteamLobby
                 StartFadeCoroutine(); // Left chat, fade the chat away
                 upperPanel.SetActive(false);
                 chatRaised = false;
-                if (!(SceneManager.GetActiveScene().name == "SampleScene"))
+                if (SceneManager.GetActiveScene().name == "GameplayScene")
                 {
                     Cursor.visible = false;
                     Cursor.lockState = CursorLockMode.Locked;
