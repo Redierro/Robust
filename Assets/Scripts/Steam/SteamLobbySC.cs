@@ -28,6 +28,7 @@ namespace SteamLobby
             if (Instance == null)
             {
                 Instance = this;
+                DontDestroyOnLoad(this.gameObject);
             }
             else if (Instance != this)
             {
@@ -38,7 +39,6 @@ namespace SteamLobby
 
         private void Start()
         {
-            Debug.Log("SteamLobby working in start");
             networkManager = NetworkManager.singleton;
             if (!SteamManager.Initialized)
             {
