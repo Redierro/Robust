@@ -84,6 +84,7 @@ namespace SteamLobby
         void OnLobbyEntered(LobbyEnter_t callback)
         {
             ChatManager.Instance.accesible = true;
+            RehookSceneReferences();
             if (NetworkServer.active)
             {
                 Debug.Log("Already in a lobby as a host. Ignoring request.");
