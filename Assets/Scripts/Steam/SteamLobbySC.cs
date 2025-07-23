@@ -12,10 +12,12 @@ namespace SteamLobby
     {
         public static SteamLobbySC Instance;
 
-        [SerializeField] private ChatManager chatManager;
         public ulong lobbyID;
         [SerializeField] private NetworkManager networkManager;
+        [Tooltip("For switching lobby and main panels")]
         [SerializeField] private PanelSwapper panelSwapper;
+        private Button leaveLobbyButton;
+
         protected Callback<LobbyCreated_t> lobbyCreated;
         protected Callback<GameLobbyJoinRequested_t> gameLobbyJoinRequested;
         protected Callback<LobbyEnter_t> lobbyEntered;
@@ -36,7 +38,6 @@ namespace SteamLobby
                 return;
             }
         }
-
         private void Start()
         {
             networkManager = NetworkManager.singleton;
@@ -45,17 +46,6 @@ namespace SteamLobby
                 Debug.LogError("Steam is not initialized");
                 return;
             }
-            if (SceneManager.GetActiveScene().name == "SampleScene") // Grab necessary comps to activate
-            {
-                Debug.Log("Looking for components...");
-                chatManager = ChatManager.Instance;
-                panelSwapper = GameObject.Find("PanelSwapper").GetComponent<PanelSwapper>();
-                if (chatManager == null || panelSwapper == null)
-                {
-                    Debug.LogError("Couldn't find the required components...");
-                }
-            }
-            RegisterSteamCallbacks();
         }
         public void RegisterSteamCallbacks()
         {
@@ -66,9 +56,11 @@ namespace SteamLobby
         }
         public void HostLobby()
         {
+            RehookSceneReferences();
+            RegisterSteamCallbacks();
             Debug.Log("Trying to host...");
             SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, networkManager.maxConnections);
-            ChatManager.Instance.enabled = true;
+            ChatManager.Instance.accesible = true;
         }
         public void OnLobbyCreated(LobbyCreated_t callback)
         {
@@ -191,7 +183,7 @@ namespace SteamLobby
         }
         private void CleanUpOnLeave()
         {
-            chatManager.chatMessages.text = "";
+            ChatManager.Instance.chatMessages.text = "";
             Debug.Log("Clearing chat messages.");
 
             // Reset UI
@@ -200,7 +192,22 @@ namespace SteamLobby
                 panelSwapper.gameObject.SetActive(true);
                 this.gameObject.SetActive(true);
                 panelSwapper.SwapPanel("MainPanel");
-                ChatManager.Instance.enabled = false;
+                ChatManager.Instance.accesible = false;
+            }
+        }
+        public void RehookSceneReferences()
+        {
+            panelSwapper = GameObject.Find("PanelSwapper")?.GetComponent<PanelSwapper>();
+            leaveLobbyButton = GameObject.Find("GoBackBTN")?.GetComponent<Button>();
+
+            if (leaveLobbyButton != null)
+            {
+                leaveLobbyButton.onClick.AddListener(LeaveLobby);
+                Debug.Log("LeaveLobby button hooked!");
+            }
+            else
+            {
+                Debug.LogWarning("LeaveLobbyButton not found. Binding skipped.");
             }
         }
     }

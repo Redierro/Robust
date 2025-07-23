@@ -21,6 +21,7 @@ namespace SteamLobby
         public GameObject upperPanel;
         public bool chatRaised = false;
         private bool newMessageReceived = false;
+        public bool accesible = true;
 
         [Header("Chat FadeAway")]
         [SerializeField] private CanvasGroup chatGroup;
@@ -36,7 +37,7 @@ namespace SteamLobby
         {
             chatLeftLenght = 160 - chatField.text.Trim().Length;
             chatLeftLenghtText.text = chatLeftLenght.ToString();
-            ChatVisibility();
+            if (accesible) ChatVisibility();
 
             // Trigger fade only when chat is closed and message arrived
             if (!chatRaised && newMessageReceived)

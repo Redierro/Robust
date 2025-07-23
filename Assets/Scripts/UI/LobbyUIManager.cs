@@ -45,7 +45,14 @@ namespace SteamLobby
             var lobby = new CSteamID(SteamLobbySC.Instance.lobbyID);
             int memberCount = SteamMatchmaking.GetNumLobbyMembers(lobby);
 
-            CSteamID hostID = new CSteamID(ulong.Parse(SteamMatchmaking.GetLobbyData(lobby, "HostAddress")));
+            string hostAddressStr = SteamMatchmaking.GetLobbyData(lobby, "HostAddress");
+            if (string.IsNullOrEmpty(hostAddressStr) || !ulong.TryParse(hostAddressStr, out ulong hostAddress))
+            {
+                Debug.LogWarning($"Failed to parse HostAddress '{hostAddressStr}' into ulong. Skipping UI update.");
+                return; // or retry later
+            }
+
+            CSteamID hostID = new CSteamID(hostAddress);
             List<CSteamID> orderedMembers = new List<CSteamID>();
 
             if (memberCount == 0)
@@ -77,6 +84,7 @@ namespace SteamLobby
                 playerNameTexts.Add(txtMesh);
 
                 string playerName = SteamFriends.GetFriendPersonaName(member);
+                Debug.Log(playerName);
                 playerNameTexts[j].text = playerName;
                 j++;
             }

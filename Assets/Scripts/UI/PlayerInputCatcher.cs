@@ -16,7 +16,7 @@ namespace SteamLobby
             // Make sure ChatManager is available
             if (ChatManager.Instance == null) return;
             // Check if Enter is pressed
-            if (Input.GetKeyDown(KeyCode.Return))
+            if (Input.GetKeyDown(KeyCode.Return) && ChatManager.Instance.chatRaised)
             {
                 Debug.Log("Sent a message!");
                 ChatManager.Instance.SendMessage();

@@ -362,7 +362,6 @@ MonoBehaviour:
   playerSpawnMethod: 1
   spawnPrefabs:
   - {fileID: 4083961700272304663, guid: 8e80f452cadee704eadea54462a823ea, type: 3}
-  - {fileID: 7156508704601250604, guid: ca6670d6286b19f4a9e362380a8b5afa, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -1806,9 +1805,9 @@ MonoBehaviour:
           m_StringArgument: LobbyPanel
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1119053950}
-        m_TargetAssemblyTypeName: SteamLobby.SteamLobbySC, Assembly-CSharp
-        m_MethodName: HostLobby
+      - m_Target: {fileID: 2029942330}
+        m_TargetAssemblyTypeName: SteamLobby.HostButtonInit, Assembly-CSharp
+        m_MethodName: StartServer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1946,6 +1945,7 @@ MonoBehaviour:
   chatLeftLenghtText: {fileID: 1499247498}
   upperPanel: {fileID: 716772898}
   chatRaised: 0
+  accesible: 0
   chatGroup: {fileID: 265440950}
   fadeDelay: 5
   fadeDuration: 1.5
@@ -1981,8 +1981,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneId: 1909047730
   _assetId: 0
-  serverOnly: 0
-  visibility: 0
+  serverOnly: 1
+  visibility: 1
   hasSpawned: 0
 --- !u!114 &1119053950
 MonoBehaviour:
@@ -1999,7 +1999,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  chatManager: {fileID: 970578434}
   lobbyID: 0
   networkManager: {fileID: 153268113}
   panelSwapper: {fileID: 69501894}
@@ -2372,19 +2371,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1141134112}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1119053950}
-        m_TargetAssemblyTypeName: SteamLobby.SteamLobbySC, Assembly-CSharp
-        m_MethodName: LeaveLobby
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1141134112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3180,6 +3167,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding: {x: -8, y: -5, z: -8, w: -5}
   m_Softness: {x: 0, y: 0}
+--- !u!1 &2029942329
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2029942331}
+  - component: {fileID: 2029942330}
+  m_Layer: 0
+  m_Name: SteamLobbyButtons
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2029942330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029942329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c15390a49708b3c43bc997eaec470a19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &2029942331
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029942329}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 978.61255, y: 569.8971, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3189,7 +3220,8 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 1718606691}
   - {fileID: 34221482}
+  - {fileID: 69501895}
   - {fileID: 970578433}
   - {fileID: 153268112}
-  - {fileID: 69501895}
   - {fileID: 1119053951}
+  - {fileID: 2029942331}
