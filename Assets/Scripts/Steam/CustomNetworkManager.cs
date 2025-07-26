@@ -80,6 +80,11 @@ namespace SteamLobby
             base.OnApplicationQuit();
         }
 
+        private void Update()
+        {
+            Debug.LogError("My steam id - " + SteamUser.GetSteamID().m_SteamID);
+        }
+
         #endregion
 
         #region Scene Management
@@ -219,7 +224,7 @@ namespace SteamLobby
 
             if (isInGameplay && SteamLobbySC.Instance.HostSteamID != SteamUser.GetSteamID().m_SteamID)
             {
-                Debug.Log("Host disconnected — showing disconnect panel to client.");
+                Debug.Log("Host disconnected — showing disconnect panel to client. Showing UI to this id - " + SteamUser.GetSteamID().m_SteamID);
                 StartCoroutine(ShowHostDisconnectAndReturn());
             }
             else
