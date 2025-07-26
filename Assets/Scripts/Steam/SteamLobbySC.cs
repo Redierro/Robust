@@ -197,6 +197,7 @@ namespace SteamLobby
 
             NetworkClient.Shutdown();
             Debug.Log("Successfully left lobby and reset networking.");
+            SteamLobbySC.Instance.gameObject.SetActive(true);
         }
         private void CleanUpOnLeave()
         {
