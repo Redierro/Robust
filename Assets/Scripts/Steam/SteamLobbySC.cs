@@ -84,12 +84,12 @@ namespace SteamLobby
         void OnLobbyEntered(LobbyEnter_t callback)
         {
             ChatManager.Instance.accesible = true;
-            RehookSceneReferences();
             if (NetworkServer.active)
             {
                 Debug.Log("Already in a lobby as a host. Ignoring request.");
                 return;
             }
+            RehookSceneReferences();
             lobbyID = callback.m_ulSteamIDLobby;
             string _hostAddress = SteamMatchmaking.GetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey);
             networkManager.networkAddress = _hostAddress;
@@ -109,6 +109,7 @@ namespace SteamLobby
                 NetworkClient.Shutdown();
             }
             SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
+            RehookSceneReferences();
         }
         void OnChatUpdate(LobbyChatUpdate_t callback)
         {
