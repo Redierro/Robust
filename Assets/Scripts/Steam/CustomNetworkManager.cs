@@ -215,22 +215,21 @@ namespace SteamLobby
         {
             base.OnClientDisconnect();
 
-            // Only show disconnect UI if this is a client, and the host disconnected
-            bool isHostLeaving = SteamLobbySC.Instance != null &&
-                                 SteamLobbySC.Instance.HostSteamID == SteamUser.GetSteamID().m_SteamID;
-
             bool isInGameplay = SceneManager.GetActiveScene().name == "GameplayScene";
 
-            if (!isHostLeaving && isInGameplay)
+            if (isInGameplay && SteamLobbySC.HostHasDisconnected)
             {
                 Debug.Log("Host disconnected — showing disconnect panel to client.");
                 StartCoroutine(ShowDisconnectAndReturn());
             }
             else
             {
-                Debug.Log("Client disconnected, but this is the host or not caused by host. Skipping panel.");
+                Debug.Log("Client disconnected or not in gameplay — skipping panel.");
             }
+
+            SteamLobbySC.HostHasDisconnected = false; // Reset after use
         }
+
 
 
         /// <summary>
@@ -280,7 +279,9 @@ namespace SteamLobby
         /// <summary>
         /// This is called when a host is stopped.
         /// </summary>
-        public override void OnStopHost() { }
+        public override void OnStopHost() {
+            SteamLobbySC.HostHasDisconnected = true;
+        }
 
         /// <summary>
         /// This is called when a server is stopped - including when a host is stopped.

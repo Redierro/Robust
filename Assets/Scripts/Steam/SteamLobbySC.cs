@@ -14,6 +14,7 @@ namespace SteamLobby
 
         public ulong lobbyID;
         public ulong HostSteamID { get; private set; }
+        public static bool HostHasDisconnected = false;
         [SerializeField] private NetworkManager networkManager;
         [Tooltip("For switching lobby and main panels")]
         [SerializeField] private PanelSwapper panelSwapper;
