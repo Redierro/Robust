@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Mirror;
 using System.Collections;
+using Steamworks;
 
 /*
 	Documentation: https://mirror-networking.gitbook.io/docs/components/network-manager
@@ -213,9 +214,21 @@ namespace SteamLobby
         public override void OnClientDisconnect()
         {
             base.OnClientDisconnect();
+
+            // Check scene to avoid firing during transitions
             if (SceneManager.GetActiveScene().name == "GameplayScene")
             {
-                StartCoroutine(ShowDisconnectAndReturn());
+                // Check if host disconnected, but only trigger if this client is NOT the host
+                if (SteamLobbySC.Instance != null &&
+                    SteamLobbySC.Instance.HostSteamID != SteamUser.GetSteamID().m_SteamID)
+                {
+                    Debug.Log("Host disconnected — showing disconnect panel to client.");
+                    StartCoroutine(ShowDisconnectAndReturn());
+                }
+                else
+                {
+                    Debug.Log("Client disconnected, but this is the host or not caused by host. Skipping panel.");
+                }
             }
         }
 

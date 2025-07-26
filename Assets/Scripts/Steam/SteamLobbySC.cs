@@ -13,6 +13,7 @@ namespace SteamLobby
         public static SteamLobbySC Instance;
 
         public ulong lobbyID;
+        public ulong HostSteamID { get; private set; }
         [SerializeField] private NetworkManager networkManager;
         [Tooltip("For switching lobby and main panels")]
         [SerializeField] private PanelSwapper panelSwapper;
@@ -49,6 +50,10 @@ namespace SteamLobby
             }
             RegisterSteamCallbacks();
         }
+        public void SetHostSteamID(ulong steamID)
+        {
+            HostSteamID = steamID;
+        }
         public void RegisterSteamCallbacks()
         {
             if (steamCallbacksRegistered) return;
@@ -69,6 +74,7 @@ namespace SteamLobby
         }
         public void OnLobbyCreated(LobbyCreated_t callback)
         {
+            SetHostSteamID(SteamUser.GetSteamID().m_SteamID);
             if (callback.m_eResult != EResult.k_EResultOK)
             {
                 Debug.LogError("Failed to create lobby: " + callback.m_eResult);
