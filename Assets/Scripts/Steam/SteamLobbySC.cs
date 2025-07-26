@@ -106,7 +106,6 @@ namespace SteamLobby
         }
         void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback)
         {
-            RegisterSteamCallbacks();
             Debug.Log("Join request received for lobby: " + callback.m_steamIDLobby);
 
             if (NetworkClient.isConnected || NetworkClient.active)
@@ -171,12 +170,6 @@ namespace SteamLobby
         }
         public void LeaveLobby()
         {
-            lobbyCreated?.Unregister();
-            gameLobbyJoinRequested?.Unregister();
-            lobbyEntered?.Unregister();
-            lobbyChatUpdate?.Unregister();
-            steamCallbacksRegistered = false;
-
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
 
