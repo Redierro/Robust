@@ -221,7 +221,7 @@ namespace SteamLobby
 
             bool isInGameplay = SceneManager.GetActiveScene().name == "GameplayScene";
 
-            if (isHostLeaving && isInGameplay)
+            if (!isHostLeaving && isInGameplay)
             {
                 Debug.Log("Host disconnected — showing disconnect panel to client.");
                 StartCoroutine(ShowDisconnectAndReturn());
@@ -303,6 +303,7 @@ namespace SteamLobby
         {
             ServerChangeScene(lobbySceneName);
             SteamLobbySC.Instance.LeaveLobby();
+            SceneManager.LoadScene(lobbySceneName);
         }
         private IEnumerator ShowDisconnectAndReturn()
         {
