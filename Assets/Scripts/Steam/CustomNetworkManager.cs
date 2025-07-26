@@ -13,7 +13,6 @@ namespace SteamLobby
 {
     public class CustomNetworkManager : NetworkManager
     {
-        public struct HostDisconnectedMessage : NetworkMessage { }
         public GameObject playerGameplayPrefab; // Used when switching to gameplay
         public GameObject playerLobbyPrefab;    // Used when inside of a lobby
                                                 // Overrides the base singleton so we don't
@@ -42,14 +41,7 @@ namespace SteamLobby
         public override void Start()
         {
             base.Start();
-
-            NetworkClient.RegisterHandler<HostDisconnectedMessage>(message =>
-            {
-                Debug.Log("Received host disconnect message — showing UI.");
-                StartCoroutine(ShowHostDisconnectAndReturn());
-            });
         }
-
 
         /// <summary>
         /// Runs on both Server and Client
@@ -225,7 +217,7 @@ namespace SteamLobby
 
             bool isInGameplay = SceneManager.GetActiveScene().name == "GameplayScene";
 
-            if (isInGameplay && SteamLobbySC.HostHasDisconnected)
+            if (isInGameplay && SteamLobbySC.Instance.HostSteamID != SteamUser.GetSteamID().m_SteamID)
             {
                 Debug.Log("Host disconnected — showing disconnect panel to client.");
                 StartCoroutine(ShowHostDisconnectAndReturn());
@@ -233,10 +225,7 @@ namespace SteamLobby
             else
             {
                 Debug.Log("Client disconnected or not in gameplay — skipping panel.");
-                LeaveGameToLobby();
             }
-
-            SteamLobbySC.HostHasDisconnected = false; // Reset after use
         }
 
 
@@ -288,17 +277,7 @@ namespace SteamLobby
         /// <summary>
         /// This is called when a host is stopped.
         /// </summary>
-        public override void OnStopHost()
-        {
-            // Broadcast message before host leaves
-            foreach (var conn in NetworkServer.connections)
-            {
-                conn.Value.Send(new HostDisconnectedMessage());
-            }
-
-            SteamLobbySC.HostHasDisconnected = false; // Defensive reset if old flag is left over
-        }
-
+        public override void OnStopHost() { }
 
         /// <summary>
         /// This is called when a server is stopped - including when a host is stopped.
