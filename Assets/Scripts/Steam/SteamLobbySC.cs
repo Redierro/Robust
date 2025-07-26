@@ -54,6 +54,10 @@ namespace SteamLobby
         {
             HostSteamID = steamID;
         }
+        private void Update()
+        {
+            Debug.LogError("Im working!");
+        }
         public void RegisterSteamCallbacks()
         {
             if (steamCallbacksRegistered) return;
@@ -170,12 +174,6 @@ namespace SteamLobby
         }
         public void LeaveLobby()
         {
-            lobbyCreated?.Unregister();
-            gameLobbyJoinRequested?.Unregister();
-            lobbyEntered?.Unregister();
-            lobbyChatUpdate?.Unregister();
-            steamCallbacksRegistered = false;
-
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
 
