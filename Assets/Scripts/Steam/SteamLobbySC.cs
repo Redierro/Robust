@@ -214,6 +214,12 @@ namespace SteamLobby
         }
         public void RehookSceneReferences()
         {
+            StartCoroutine(DelayedRehook());
+        }
+        private IEnumerator DelayedRehook()
+        {
+            yield return new WaitForSeconds(0.2f); // Give scene time to stabilize
+
             panelSwapper = GameObject.Find("PanelSwapper")?.GetComponent<PanelSwapper>();
             leaveLobbyButton = GameObject.Find("GoBackBTN")?.GetComponent<Button>();
 
