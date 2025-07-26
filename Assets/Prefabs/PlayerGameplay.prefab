@@ -1621,8 +1621,8 @@ MonoBehaviour:
   regenDelay: 1.5
   maxHealth: 100
   currentHealth: 0
-  minFallSpeedForDamage: 5
-  maxFallSpeedForMaxDamage: 30
+  minFallSpeedForDamage: 15
+  maxFallSpeedForMaxDamage: 40
   maxFallDamage: 100
   energyText: {fileID: 5119311133805931007}
   healthText: {fileID: 9078193054920948803}

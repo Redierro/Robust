@@ -19,8 +19,8 @@ public class PlayerStats : NetworkBehaviour
     public float maxHealth = 100f;
     public float currentHealth;
 
-    [SerializeField] private float minFallSpeedForDamage = 10f;
-    [SerializeField] private float maxFallSpeedForMaxDamage = 30f;
+    [SerializeField] private float minFallSpeedForDamage = 15f;
+    [SerializeField] private float maxFallSpeedForMaxDamage = 40f;
     [SerializeField] private float maxFallDamage = 100f; // Full health loss
 
 
@@ -79,15 +79,19 @@ public class PlayerStats : NetworkBehaviour
         if (healthText != null)
             healthText.text = $"Health: {Mathf.RoundToInt(currentHealth)}";
     }
-    public void TakeFallDamage(float fallSpeed)
+    public void FallDamage(float fallSpeed)
     {
         if (fallSpeed < minFallSpeedForDamage) return;
 
         float fallRatio = Mathf.InverseLerp(minFallSpeedForDamage, maxFallSpeedForMaxDamage, fallSpeed);
         float damage = fallRatio * maxFallDamage;
 
-        currentHealth = Mathf.Max(currentHealth - damage, 0f);
-        Debug.Log($"Ouch! Fall speed: {fallSpeed}, damage: {damage}");
+        TakeDamage(damage);
     }
 
+    public void TakeDamage(float damage)
+    {
+        currentHealth = Mathf.Max(currentHealth - damage, 0f);
+        Debug.Log($"Ouch! Took damage: {damage}");
+    }
 }

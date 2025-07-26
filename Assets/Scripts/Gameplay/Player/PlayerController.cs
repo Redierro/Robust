@@ -137,7 +137,7 @@ namespace SteamLobby
             if (!wasGroundedLastFrame && isGrounded && previousYVelocity < -0.1f)
             {
                 float impactSpeed = Mathf.Abs(previousYVelocity);
-                playerStats.TakeFallDamage(impactSpeed);
+                playerStats.FallDamage(impactSpeed);
                 Debug.Log("Impact speed - " + impactSpeed);
             }
 
