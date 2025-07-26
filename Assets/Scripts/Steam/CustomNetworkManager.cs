@@ -215,22 +215,23 @@ namespace SteamLobby
         {
             base.OnClientDisconnect();
 
-            // Check scene to avoid firing during transitions
-            if (SceneManager.GetActiveScene().name == "GameplayScene")
+            // Only show disconnect UI if this is a client, and the host disconnected
+            bool isHostLeaving = SteamLobbySC.Instance != null &&
+                                 SteamLobbySC.Instance.HostSteamID == SteamUser.GetSteamID().m_SteamID;
+
+            bool isInGameplay = SceneManager.GetActiveScene().name == "GameplayScene";
+
+            if (!isHostLeaving && isInGameplay)
             {
-                // Check if host disconnected, but only trigger if this client is NOT the host
-                if (SteamLobbySC.Instance != null &&
-                    SteamLobbySC.Instance.HostSteamID != SteamUser.GetSteamID().m_SteamID)
-                {
-                    Debug.Log("Host disconnected — showing disconnect panel to client.");
-                    StartCoroutine(ShowDisconnectAndReturn());
-                }
-                else
-                {
-                    Debug.Log("Client disconnected, but this is the host or not caused by host. Skipping panel.");
-                }
+                Debug.Log("Host disconnected — showing disconnect panel to client.");
+                StartCoroutine(ShowDisconnectAndReturn());
+            }
+            else
+            {
+                Debug.Log("Client disconnected, but this is the host or not caused by host. Skipping panel.");
             }
         }
+
 
         /// <summary>
         /// Called on clients when a servers tells the client it is no longer ready.
@@ -297,7 +298,6 @@ namespace SteamLobby
             if (SteamLobbySC.Instance != null)
                 SteamLobbySC.Instance.LeaveLobby();
         }
-
 
         public void LeaveGameToLobby(string lobbySceneName = "SampleScene")
         {
