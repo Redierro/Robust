@@ -1610,6 +1610,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51747b7f951dc804cb2c4ab37b26cc97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   maxEnergy: 150
   currentEnergy: 0
   energyDrainJump: 15
@@ -1690,6 +1693,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5683418259339875077}
+  - component: {fileID: 1680084166714218191}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -1713,6 +1717,22 @@ Transform:
   - {fileID: 1155153785368419933}
   m_Father: {fileID: 1419913315529327865}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1680084166714218191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7098114592941212455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62db7782ffcae4940928ecc5f44039ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  playerCanvas: {fileID: 5035232094548067626}
 --- !u!1 &7418532554864390964
 GameObject:
   m_ObjectHideFlags: 0

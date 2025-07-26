@@ -1,7 +1,9 @@
 using UnityEngine;
 using TMPro;
+using Mirror;
+using Steamworks;
 
-public class PlayerStats : MonoBehaviour
+public class PlayerStats : NetworkBehaviour
 {
     [Header("Energy Stats")]
     public float maxEnergy = 100f;
