@@ -23,6 +23,7 @@ namespace SteamLobby
         protected Callback<GameLobbyJoinRequested_t> gameLobbyJoinRequested;
         protected Callback<LobbyEnter_t> lobbyEntered;
         protected Callback<LobbyChatUpdate_t> lobbyChatUpdate;
+        private bool steamCallbacksRegistered = false;
 
         private const string HostAddressKey = "HostAddress";
 
@@ -55,10 +56,14 @@ namespace SteamLobby
         }
         public void RegisterSteamCallbacks()
         {
+            if (steamCallbacksRegistered) return;
+
             lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
             gameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
             lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
             lobbyChatUpdate = Callback<LobbyChatUpdate_t>.Create(OnChatUpdate);
+
+            steamCallbacksRegistered = true;
         }
         public void HostLobby()
         {
@@ -101,6 +106,7 @@ namespace SteamLobby
         }
         void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback)
         {
+            RegisterSteamCallbacks();
             Debug.Log("Join request received for lobby: " + callback.m_steamIDLobby);
 
             if (NetworkClient.isConnected || NetworkClient.active)
@@ -165,6 +171,12 @@ namespace SteamLobby
         }
         public void LeaveLobby()
         {
+            lobbyCreated?.Unregister();
+            gameLobbyJoinRequested?.Unregister();
+            lobbyEntered?.Unregister();
+            lobbyChatUpdate?.Unregister();
+            steamCallbacksRegistered = false;
+
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
 
