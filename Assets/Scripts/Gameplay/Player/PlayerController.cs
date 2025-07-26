@@ -20,15 +20,16 @@ namespace SteamLobby
 
         [Header("Movement")]
         [SerializeField] private float walkSpeed = 5f;
-        [SerializeField] private float runSpeed = 10f;
+        [SerializeField] public float runSpeed = 10f;
         [SerializeField] private float acceleration = 20f;
         [SerializeField] private float deceleration = 25f;
         public float targetSpeed;
         private bool wasRunningOnJump = false;
         private Vector3 momentumVelocity = Vector3.zero;
-        private Vector3 currentVelocity = Vector3.zero;
+        public Vector3 currentVelocity = Vector3.zero;
         public Vector3 CurrentVelocity => currentVelocity;
-
+        public bool IsActuallyMoving => currentVelocity.magnitude > 0.1f;
+        public bool IsActuallyRunning => targetSpeed == runSpeed && playerStats.CanRun();
 
         [Header("Jumping")]
         [SerializeField] private float jumpForce = 20f;
@@ -36,6 +37,11 @@ namespace SteamLobby
         [SerializeField] private Transform groundCheck;
         [SerializeField] private float groundDistance = 0.2f;
         private bool isGrounded;
+        private bool wasFalling = false;
+        private float previousYVelocity = 0f;
+
+        [Header("PlayerStats")]
+        [SerializeField] public PlayerStats playerStats;
 
         [Header("ETC")]
         public IngameUI igUI;
@@ -47,6 +53,7 @@ namespace SteamLobby
                 var unityCam = GetComponentInChildren<Camera>();
                 var cineCam = GetComponentInChildren<CinemachineCamera>();
                 var brain = unityCam?.GetComponent<CinemachineBrain>();
+                playerStats = GetComponent<PlayerStats>();
 
                 if (unityCam) unityCam.enabled = false;
                 if (brain) brain.enabled = false;
@@ -85,7 +92,10 @@ namespace SteamLobby
 
             if (isGrounded)
             {
-                targetSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+                targetSpeed = (Input.GetKey(KeyCode.LeftShift) && playerStats.CanRun()) ? runSpeed : walkSpeed;
+                if (targetSpeed == runSpeed)
+                    playerStats.ConsumeEnergyForRun();
+
 
                 Vector3 targetVelocity = inputDir * targetSpeed;
 
@@ -104,23 +114,35 @@ namespace SteamLobby
         }
         private void HandleJump()
         {
-            bool wasGrounded = isGrounded;
+            previousYVelocity = _rb.linearVelocity.y;
+
+            bool wasGroundedLastFrame = isGrounded;
             isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayer);
 
-            if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+            if (Input.GetKeyDown(KeyCode.Space) && isGrounded && playerStats.CanJump())
             {
-                // Save momentum direction and speed at jump
-                wasRunningOnJump = Input.GetKey(KeyCode.LeftShift);
-                momentumVelocity = currentVelocity; // Lock in momentum
+                playerStats.ConsumeEnergyForJump();
                 _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                wasRunningOnJump = Input.GetKey(KeyCode.LeftShift);
+                momentumVelocity = currentVelocity;
             }
 
             // Don't reset momentum immediately when grounded
-            if (wasGrounded == false && isGrounded)
+            if (wasGroundedLastFrame == false && isGrounded)
             {
                 wasRunningOnJump = false;
             }
+
+            // Detect landing
+            if (!wasGroundedLastFrame && isGrounded && previousYVelocity < -0.1f)
+            {
+                float impactSpeed = Mathf.Abs(previousYVelocity);
+                playerStats.TakeFallDamage(impactSpeed);
+                Debug.Log("Impact speed - " + impactSpeed);
+            }
+
         }
+
 
         private void HandleMouseLook()
         {

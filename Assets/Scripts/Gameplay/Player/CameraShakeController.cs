@@ -3,6 +3,7 @@ using Unity.Cinemachine;
 using Mirror;
 using Steamworks;
 using SteamLobby;
+
 public class CameraShakeController : NetworkBehaviour
 {
     [Header("Shake values")]
@@ -11,43 +12,43 @@ public class CameraShakeController : NetworkBehaviour
     [SerializeField] private float walkFrequency = 0.2f;
     [SerializeField] private float runAmplitude = 1.7f;
     [SerializeField] private float runFrequency = 0.4f;
-    [SerializeField] private float shakeDamping = 5f; // fade speed
+    [SerializeField] private float shakeDamping = 5f;
 
     private CinemachineBasicMultiChannelPerlin noise;
     private float targetAmplitude = 0f;
     private float currentAmplitude = 0f;
     private float targetFrequency = 0f;
     private float currentFrequency = 0f;
-    bool isMoving = false;
-    bool isRunning = false;
+    private bool isMoving = false;
+    private bool isRunning = false;
 
     [Header("ETC")]
     public IngameUI igUI;
+    private PlayerController playerController;
 
     void Start()
     {
         noise = virtualCam.GetComponent<CinemachineBasicMultiChannelPerlin>();
+        playerController = GetComponentInParent<PlayerController>();
     }
 
     void Update()
     {
-        if (!isLocalPlayer || ChatManager.Instance == null) return;
+        if (!isLocalPlayer || ChatManager.Instance == null || playerController == null || noise == null) return;
 
         if (ChatManager.Instance.chatRaised || igUI.escapeRaised)
         {
             isMoving = false;
             isRunning = false;
-        } // Chat is open, block control
+        }
         else
         {
-            if (noise == null) return;
-
-            if (!(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))) { isMoving = false; isRunning = false; }
-            else if (this.GetComponentInParent<PlayerController>().targetSpeed == 4) { isMoving = true; isRunning = false; }
-            else if (this.GetComponentInParent<PlayerController>().targetSpeed == 8) { isRunning = true; isMoving = true; }
+            isMoving = playerController.currentVelocity.magnitude > 0.1f;
+            isRunning = playerController.targetSpeed == playerController.runSpeed &&
+                        playerController.playerStats.CanRun(); // Assumes playerStats has CanRun()
         }
 
-        // Set target shake based on movement state
+        // Set target shake
         if (isMoving)
         {
             targetAmplitude = isRunning ? runAmplitude : walkAmplitude;
@@ -59,7 +60,6 @@ public class CameraShakeController : NetworkBehaviour
             targetFrequency = 0f;
         }
 
-        // Smoothly fade shake in/out
         currentAmplitude = Mathf.Lerp(currentAmplitude, targetAmplitude, Time.deltaTime * shakeDamping);
         currentFrequency = Mathf.Lerp(currentFrequency, targetFrequency, Time.deltaTime * shakeDamping);
 
