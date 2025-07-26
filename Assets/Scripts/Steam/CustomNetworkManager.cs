@@ -13,6 +13,7 @@ namespace SteamLobby
 {
     public class CustomNetworkManager : NetworkManager
     {
+        public struct HostDisconnectedMessage : NetworkMessage { }
         public GameObject playerGameplayPrefab; // Used when switching to gameplay
         public GameObject playerLobbyPrefab;    // Used when inside of a lobby
                                                 // Overrides the base singleton so we don't
@@ -41,7 +42,14 @@ namespace SteamLobby
         public override void Start()
         {
             base.Start();
+
+            NetworkClient.RegisterHandler<HostDisconnectedMessage>(message =>
+            {
+                Debug.Log("Received host disconnect message — showing UI.");
+                StartCoroutine(ShowDisconnectAndReturn());
+            });
         }
+
 
         /// <summary>
         /// Runs on both Server and Client
@@ -279,9 +287,17 @@ namespace SteamLobby
         /// <summary>
         /// This is called when a host is stopped.
         /// </summary>
-        public override void OnStopHost() {
-            SteamLobbySC.HostHasDisconnected = true;
+        public override void OnStopHost()
+        {
+            // Broadcast message before host leaves
+            foreach (var conn in NetworkServer.connections)
+            {
+                conn.Value.Send(new HostDisconnectedMessage());
+            }
+
+            SteamLobbySC.HostHasDisconnected = false; // Defensive reset if old flag is left over
         }
+
 
         /// <summary>
         /// This is called when a server is stopped - including when a host is stopped.
