@@ -46,7 +46,7 @@ namespace SteamLobby
             NetworkClient.RegisterHandler<HostDisconnectedMessage>(message =>
             {
                 Debug.Log("Received host disconnect message — showing UI.");
-                StartCoroutine(ShowDisconnectAndReturn());
+                StartCoroutine(ShowHostDisconnectAndReturn());
             });
         }
 
@@ -228,11 +228,12 @@ namespace SteamLobby
             if (isInGameplay && SteamLobbySC.HostHasDisconnected)
             {
                 Debug.Log("Host disconnected — showing disconnect panel to client.");
-                StartCoroutine(ShowDisconnectAndReturn());
+                StartCoroutine(ShowHostDisconnectAndReturn());
             }
             else
             {
                 Debug.Log("Client disconnected or not in gameplay — skipping panel.");
+                LeaveGameToLobby();
             }
 
             SteamLobbySC.HostHasDisconnected = false; // Reset after use
@@ -322,7 +323,7 @@ namespace SteamLobby
             SteamLobbySC.Instance.LeaveLobby();
             SceneManager.LoadScene(lobbySceneName);
         }
-        private IEnumerator ShowDisconnectAndReturn()
+        private IEnumerator ShowHostDisconnectAndReturn()
         {
             GlobalUIManager.Instance.OnDisconnectedPanel.SetActive(true);
             yield return new WaitForSeconds(0.1f);
