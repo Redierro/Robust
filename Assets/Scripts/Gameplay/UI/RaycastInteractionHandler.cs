@@ -36,6 +36,7 @@ public class RaycastInteractionHandler : NetworkBehaviour
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     interactable.Interact(gameObject);
+                    NetworkServer.Destroy(target.gameObject);
                 }
 
                 return;
