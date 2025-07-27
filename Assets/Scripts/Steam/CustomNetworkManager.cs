@@ -80,11 +80,6 @@ namespace SteamLobby
             base.OnApplicationQuit();
         }
 
-        private void Update()
-        {
-            Debug.LogError("My steam id - " + SteamUser.GetSteamID().m_SteamID);
-        }
-
         #endregion
 
         #region Scene Management
