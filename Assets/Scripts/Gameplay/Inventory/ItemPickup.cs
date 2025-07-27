@@ -9,16 +9,12 @@ public class ItemPickup : NetworkBehaviour, IInteractable
         => $"Press [E] to pick up {itemData.itemName}";
 
     public void Interact(GameObject player)
-    {
-        NetworkIdentity identity = player.GetComponent<NetworkIdentity>();
-        CmdPickupItem(identity);
-    }
+        => CmdPickupItem(player);
 
-    [Command]
-    void CmdPickupItem(NetworkIdentity playerId)
+    [ClientRpc]
+    void CmdPickupItem(GameObject player)
     {
-        InventoryManager inventory = playerId.GetComponentInChildren<InventoryManager>();
-        inventory.AddItem(itemData);
+        player.GetComponentInChildren<InventoryManager>().AddItem(itemData);
         NetworkServer.Destroy(gameObject);
     }
 }
