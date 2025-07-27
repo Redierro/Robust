@@ -36,7 +36,7 @@ public class RaycastInteractionHandler : NetworkBehaviour
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     interactable.Interact(gameObject);
-                    NetworkServer.Destroy(target.gameObject);
+                    DestroyObject(target.gameObject);
                 }
 
                 return;
@@ -45,5 +45,11 @@ public class RaycastInteractionHandler : NetworkBehaviour
 
         uiManager?.HidePrompt();
         lastInteractable = null;
+    }
+    [Command]
+
+    private void DestroyObject(GameObject gameObject)
+    {
+        NetworkServer.Destroy(gameObject);
     }
 }
