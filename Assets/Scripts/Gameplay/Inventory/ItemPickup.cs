@@ -10,8 +10,7 @@ public class ItemPickup : NetworkBehaviour, IInteractable
 
     public void Interact(GameObject player)
         => CmdPickupItem(player);
-
-    [ClientRpc]
+    [Command]
     void CmdPickupItem(GameObject player)
     {
         player.GetComponentInChildren<InventoryManager>().AddItem(itemData);
