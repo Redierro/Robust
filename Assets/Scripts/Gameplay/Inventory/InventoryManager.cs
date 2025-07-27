@@ -45,14 +45,12 @@ public class InventoryManager : NetworkBehaviour
         {
             isInventoryOpen = true;
             CmdSetInventoryState(isInventoryOpen);
-            RpcUpdateCanvasState(isInventoryOpen);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape)) // Close
         {
             isInventoryOpen = false;
             CmdSetInventoryState(isInventoryOpen);
-            RpcUpdateCanvasState(isInventoryOpen);
         }
 
         if (Input.GetKeyDown(KeyCode.P)) // Close
@@ -71,6 +69,7 @@ public class InventoryManager : NetworkBehaviour
     void CmdSetInventoryState(bool open)
     {
         isInventoryOpen = open;
+        RpcUpdateCanvasState(open);
     }
 
     [ClientRpc]
