@@ -1,15 +1,18 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class ItemPickup : NetworkBehaviour
+public class ItemPickup : NetworkBehaviour, IInteractable
 {
-    public Item itemData;
-    public void CmdPickupItem(GameObject player)
+    [SerializeField] private Item itemData; // Assign in inspector
+
+    public string GetInteractionText()
+        => $"Press [E] to pick up {itemData.itemName}";
+
+    public void Interact(GameObject player)
+        => CmdPickupItem(player);
+    void CmdPickupItem(GameObject player)
     {
-        if (player == null) { Debug.LogError("Couldn't find player from connection"); return; }
         player.GetComponentInChildren<InventoryManager>().AddItem(itemData);
-        Debug.Log("Added " + itemData.name + " to the inventory!");
         NetworkServer.Destroy(gameObject);
     }
 }
