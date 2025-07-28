@@ -147,15 +147,28 @@ namespace SteamLobby
                 stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeKicked))
             {
                 Debug.Log(playerName + " has left the lobby.");
-                ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#8B0000>has left the lobby.</color>");
+                if (SceneManager.GetActiveScene().name == "SampleScene")
+                {
+                    ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#8B0000>has left the lobby.</color>");
+                }
+                else if (SceneManager.GetActiveScene().name == "GameplayScene")
+                {
+                    ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#8B0000>has left the game.</color>");
+                }
             }
 
             // Chat message that someone entered
             if (stateChange.HasFlag(EChatMemberStateChange.k_EChatMemberStateChangeEntered))
             {
                 Debug.Log(playerName + " has joined the lobby.");
-
-                ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#006400>has joined the lobby.</color>");
+                if (SceneManager.GetActiveScene().name == "SampleScene")
+                {
+                    ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#006400>has joined the lobby.</color>");
+                }
+                else if (SceneManager.GetActiveScene().name == "GameplayScene")
+                {
+                    ChatManager.Instance?.ReceiveMessage($"{playerName} <color=#006400>has joined the game.</color>");
+                }
             }
         }
         private IEnumerator DelayedNameUpdate(float delay)

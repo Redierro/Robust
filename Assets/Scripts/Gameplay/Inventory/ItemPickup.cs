@@ -1,17 +1,21 @@
 using UnityEngine;
 using Mirror;
 
-public class ItemPickup : NetworkBehaviour, IInteractable
+namespace SteamLobby
 {
-    [SerializeField] private Item itemData; // Assign in inspector
-
-    public string GetInteractionText()
-        => $"Press [E] to pick up {itemData.itemName}";
-
-    public void Interact(GameObject player)
-        => CmdPickupItem(player);
-    void CmdPickupItem(GameObject player)
+    public class ItemPickup : NetworkBehaviour, IInteractable
     {
-        player.GetComponentInChildren<InventoryManager>().AddItem(itemData);
+        [SerializeField] private Item itemData; // Assign in inspector
+
+        public string GetInteractionText()
+            => $"Press [E] to pick up {itemData.itemName}";
+
+        public void Interact(GameObject player)
+            => CmdPickupItem(player);
+        void CmdPickupItem(GameObject player)
+        {
+            player.GetComponentInChildren<InventoryManager>().AddItem(itemData);
+        }
     }
+
 }

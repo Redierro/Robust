@@ -25,6 +25,7 @@ namespace SteamLobby
         [SerializeField] private float deceleration = 25f;
         public float targetSpeed;
         private bool wasRunningOnJump = false;
+        public bool isMovementLocked = false;
         private Vector3 momentumVelocity = Vector3.zero;
         public Vector3 currentVelocity = Vector3.zero;
         public Vector3 CurrentVelocity => currentVelocity;
@@ -72,7 +73,7 @@ namespace SteamLobby
         {
             if (!isLocalPlayer || ChatManager.Instance == null) return;
 
-            if (ChatManager.Instance.chatRaised || igUI.escapeRaised) return; // Chat or option menu is open, block control
+            if (ChatManager.Instance.chatRaised || igUI.escapeRaised || isMovementLocked) return; // Chat/option menu/inventory is open, block control
 
             HandleMovement();
             HandleMouseLook();
