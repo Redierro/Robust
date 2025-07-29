@@ -11,12 +11,11 @@ namespace SteamLobby
         public Transform inventoryCanvas;
         public GameObject slotPrefab;       // InventorySlot prefab
         public Transform slotParent;        // A UI container in canvas
-        private CameraTransitionController camController;
+        [SerializeField] private CameraTransitionController camController;
         private PlayerController playerController;
 
         void Start()
         {
-            camController = Camera.main.GetComponent<CameraTransitionController>();
             playerController = GetComponentInParent<PlayerController>();
         }
         public void AddItem(Item item)
@@ -45,39 +44,27 @@ namespace SteamLobby
             }
         }
 
-        void Update()
+        public void OpenInventory()
         {
-            if (!isLocalPlayer) return;
+            isInventoryOpen = true;
+            CmdSetInventoryState(isInventoryOpen);
 
-            if (Input.GetKeyDown(KeyCode.I)) // Open inv
-            {
-                isInventoryOpen = true;
-                CmdSetInventoryState(isInventoryOpen);
+            camController?.TransitionToInventory();
+            playerController.isMovementLocked = true;
 
-                camController?.TransitionToInventory();
-                playerController.isMovementLocked = true;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        public void CloseInventory()
+        {
+            isInventoryOpen = false;
+            CmdSetInventoryState(isInventoryOpen);
 
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
+            camController?.TransitionToDefault();
+            playerController.isMovementLocked = false;
 
-            if (Input.GetKeyDown(KeyCode.Escape)) // Close inv
-            {
-                isInventoryOpen = false;
-                CmdSetInventoryState(isInventoryOpen);
-
-                camController?.TransitionToDefault();
-                playerController.isMovementLocked = false;
-
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-
-            }
-
-            if (Input.GetKeyDown(KeyCode.P)) // Clear inv
-            {
-                ClearInventory();
-            }
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
         public void ClearInventory()
         {

@@ -11,11 +11,9 @@ namespace SteamLobby
         private Rigidbody _rb;
 
         [Header("Camera Rig")]
-        [SerializeField] private Transform cameraPivot;
-        [SerializeField] private float rotationSmoothSpeed = 5f;
+        [SerializeField] private Transform playerCamera;
+        [SerializeField] private Transform cinemachineCamera;
         private float xRotation = 0f;
-
-        [Header("Camera")]
         [SerializeField] private float mouseSensitivity = 100f;
 
         [Header("Movement")]
@@ -143,22 +141,19 @@ namespace SteamLobby
             }
 
         }
-
-
         private void HandleMouseLook()
         {
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
             float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-            // Horizontal rotation of player
+            // Rotate the player horizontally (left/right)
             transform.Rotate(Vector3.up * mouseX);
 
-            // Vertical rotation of camera pivot (with smoothing)
+            // Rotate the camera vertically (up/down)
             xRotation -= mouseY;
             xRotation = Mathf.Clamp(xRotation, -45f, 45f);
 
-            float currentX = Mathf.LerpAngle(cameraPivot.localEulerAngles.x, xRotation, Time.deltaTime * rotationSmoothSpeed);
-            cameraPivot.localRotation = Quaternion.Euler(currentX, 0f, 0f);
+            cinemachineCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         }
     }
 }

@@ -65,35 +65,42 @@ namespace SteamLobby
                 StartCoroutine(RefocusInputField());
             }
         }
+        public void OpenChat()
+        {
+            // Cancel fade instantly
+            if (fadeCoroutine != null)
+            {
+                StopCoroutine(fadeCoroutine);
+                fadeCoroutine = null;
+            }
+            chatGroup.alpha = 1f;
+            upperPanel.SetActive(true);
+            chatRaised = true;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+
+            StartCoroutine(RefocusInputField());
+        }
+        public void CloseChat()
+        {
+            StartFadeCoroutine(); // Left chat, fade the chat away
+            upperPanel.SetActive(false);
+            chatRaised = false;
+            if (SceneManager.GetActiveScene().name == "GameplayScene")
+            {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+        }
         private void ChatVisibility()
         {
             if (Input.GetKeyDown(KeyCode.Return) && !chatRaised)
             {
-                // Cancel fade instantly
-                if (fadeCoroutine != null)
-                {
-                    StopCoroutine(fadeCoroutine);
-                    fadeCoroutine = null;
-                }
-                chatGroup.alpha = 1f;
-
-                upperPanel.SetActive(true);
-                chatRaised = true;
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
-
-                StartCoroutine(RefocusInputField());
+                
             }
             else if (Input.GetKeyDown(KeyCode.Escape) && chatRaised)
             {
-                StartFadeCoroutine(); // Left chat, fade the chat away
-                upperPanel.SetActive(false);
-                chatRaised = false;
-                if (SceneManager.GetActiveScene().name == "GameplayScene")
-                {
-                    Cursor.visible = false;
-                    Cursor.lockState = CursorLockMode.Locked;
-                }
+                
             }
         }
         private void StartFadeCoroutine()

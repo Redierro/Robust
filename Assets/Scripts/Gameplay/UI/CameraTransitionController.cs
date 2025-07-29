@@ -3,8 +3,8 @@ using System.Collections;
 
 public class CameraTransitionController : MonoBehaviour
 {
-    public Transform defaultTarget;
-    public Transform inventoryTarget;
+    [SerializeField] private Transform defaultTarget;
+    [SerializeField] private Transform inventoryTarget;
     public float transitionDuration = 0.5f;
 
     private Coroutine currentTransition;
@@ -13,12 +13,14 @@ public class CameraTransitionController : MonoBehaviour
     {
         if (currentTransition != null) StopCoroutine(currentTransition);
         currentTransition = StartCoroutine(AnimateCameraTransition(inventoryTarget));
+        Debug.Log("Moving the camera to inventory.");
     }
 
     public void TransitionToDefault()
     {
         if (currentTransition != null) StopCoroutine(currentTransition);
         currentTransition = StartCoroutine(AnimateCameraTransition(defaultTarget));
+        Debug.Log("Moving the camera back to the original place.");
     }
 
     private IEnumerator AnimateCameraTransition(Transform target)
@@ -30,8 +32,11 @@ public class CameraTransitionController : MonoBehaviour
         while (elapsed < transitionDuration)
         {
             float t = elapsed / transitionDuration;
-            transform.position = Vector3.Lerp(startPos, target.position, t);
-            transform.rotation = Quaternion.Slerp(startRot, target.rotation, t);
+            // Apply ease-in-out using a cubic curve
+            float easedT = t * t * (3f - 2f * t);
+
+            transform.position = Vector3.Lerp(startPos, target.position, easedT);
+            transform.rotation = Quaternion.Slerp(startRot, target.rotation, easedT);
 
             elapsed += Time.deltaTime;
             yield return null;
@@ -40,4 +45,5 @@ public class CameraTransitionController : MonoBehaviour
         transform.position = target.position;
         transform.rotation = target.rotation;
     }
+
 }
