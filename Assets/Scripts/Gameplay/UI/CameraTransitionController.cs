@@ -11,6 +11,7 @@ public class CameraTransitionController : MonoBehaviour
 
     public void TransitionToInventory()
     {
+        defaultTarget.transform.rotation = gameObject.transform.rotation;
         if (currentTransition != null) StopCoroutine(currentTransition);
         currentTransition = StartCoroutine(AnimateCameraTransition(inventoryTarget));
         Debug.Log("Moving the camera to inventory.");
