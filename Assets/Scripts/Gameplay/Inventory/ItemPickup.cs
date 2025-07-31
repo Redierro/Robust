@@ -5,17 +5,16 @@ namespace SteamLobby
 {
     public class ItemPickup : NetworkBehaviour, IInteractable
     {
-        [SerializeField] private Item itemData; // Assign in inspector
+        [SerializeField] private Item itemData;
 
         public string GetInteractionText()
             => $"Press [E] to pick up {itemData.itemName}";
 
         public void Interact(GameObject player)
-            => CmdPickupItem(player);
-        void CmdPickupItem(GameObject player)
         {
-            player.GetComponentInChildren<InventoryManager>().AddItem(itemData);
+            var manager = player.GetComponentInChildren<InventoryManager>();
+            if (manager != null)
+                manager.TryAddItem(itemData);
         }
     }
-
 }

@@ -6,11 +6,11 @@ namespace SteamLobby
 {
     public class InventoryManager : NetworkBehaviour
     {
-        [SyncVar] public bool isInventoryOpen;
-        public List<Item> inventorySlots = new List<Item>(32);
         public Transform inventoryCanvas;
-        public GameObject slotPrefab;       // InventorySlot prefab
-        public Transform slotParent;        // A UI container in canvas
+        public List<InventorySlotUI> slots; // Assigned in Inspector
+        public GameObject itemUIPrefab;
+        public bool isInventoryOpen => inventoryCanvas != null && inventoryCanvas.gameObject.activeSelf;
+
         [SerializeField] private CameraTransitionController camController;
         private PlayerController playerController;
 
@@ -18,73 +18,51 @@ namespace SteamLobby
         {
             playerController = GetComponentInParent<PlayerController>();
         }
-        public void AddItem(Item item)
-        {
-            inventorySlots.Add(item);
-            UpdateInventoryUI();
-        }
 
-        private void UpdateInventoryUI()
+        public void TryAddItem(Item item)
         {
-            // Clear existing slots
-            foreach (Transform child in slotParent)
+            foreach (InventorySlotUI slot in slots)
             {
-                Destroy(child.gameObject);
-            }
-
-            // Create new slots based on inventory
-            foreach (Item item in inventorySlots)
-            {
-                GameObject slotGO = Instantiate(slotPrefab, slotParent);
-                InventorySlotUI slotUI = slotGO.GetComponent<InventorySlotUI>();
-                if (slotUI != null)
+                if (slot.IsEmpty())
                 {
-                    slotUI.SetItem(item); // Assuming your slot prefab has this method
+                    GameObject itemGO = Instantiate(itemUIPrefab, slot.transform, false);
+                    itemGO.transform.localPosition = Vector3.zero;
+                    itemGO.transform.localScale = Vector3.one;
+
+                    ItemUI itemUI = itemGO.GetComponent<ItemUI>();
+                    itemUI.Setup(item);
+                    slot.SetItem(itemUI);
+                    return;
                 }
             }
+
+            Debug.Log("Inventory is full!");
         }
 
         public void OpenInventory()
         {
-            isInventoryOpen = true;
-            CmdSetInventoryState(isInventoryOpen);
-
+            inventoryCanvas.gameObject.SetActive(true);
             camController?.TransitionToInventory();
             playerController.isMovementLocked = true;
 
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
+
         public void CloseInventory()
         {
-            isInventoryOpen = false;
-            CmdSetInventoryState(isInventoryOpen);
-
+            inventoryCanvas.gameObject.SetActive(false);
             camController?.TransitionToDefault();
             playerController.isMovementLocked = false;
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
+
         public void ClearInventory()
         {
-            inventorySlots.Clear();
-            UpdateInventoryUI();
-            Debug.Log("Inventory cleared!");
-        }
-
-        [Command]
-        void CmdSetInventoryState(bool open)
-        {
-            isInventoryOpen = open;
-            RpcUpdateCanvasState(open);
-        }
-
-        [ClientRpc]
-        void RpcUpdateCanvasState(bool open)
-        {
-            inventoryCanvas.gameObject.SetActive(open);
+            foreach (var slot in slots)
+                slot.ClearItem();
         }
     }
-
 }
