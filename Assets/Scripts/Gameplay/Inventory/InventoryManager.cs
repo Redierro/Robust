@@ -31,7 +31,7 @@ namespace SteamLobby
 
                     ItemUI itemUI = itemGO.GetComponent<ItemUI>();
                     itemUI.Setup(item);
-                    slot.SetItem(itemUI);
+                    slot.SetItem(itemUI, null);
                     return;
                 }
             }
