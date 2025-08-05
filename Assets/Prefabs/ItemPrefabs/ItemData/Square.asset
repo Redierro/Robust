@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Square
   m_EditorClassIdentifier: 
   itemName: Square
-  icon: {fileID: 21300000, guid: 13ba34da9011744c884f459ce4699444, type: 3}
+  icon: {fileID: 21300000, guid: 4b66f21097323d44ab40669b2fb9c53d, type: 3}
   prefab: {fileID: 9034509822482694909, guid: 9d5bc4359b3142244a6cf163b80318f0, type: 3}

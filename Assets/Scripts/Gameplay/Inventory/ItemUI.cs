@@ -63,13 +63,7 @@ public class ItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         if (newSlot != null)
         {
             InventorySlotUI sourceSlot = originalSlot.GetComponent<InventorySlotUI>();
-            newSlot.SetItem(this, sourceSlot); // <-- Pass the sourceSlot directly
-
-            if (originalSlot != newSlot)
-            {
-                sourceSlot.currentItem = null;
-                // Item will already be re-parented
-            }
+            newSlot.SetItem(this, sourceSlot); // Pass the sourceSlot directly
         }
         else
         {

@@ -3,6 +3,7 @@ using UnityEngine;
 public class InventorySlotUI : MonoBehaviour
 {
     public ItemUI currentItem;
+    public ItemUI previousItem;
 
     public bool IsEmpty() => currentItem == null;
 
@@ -10,6 +11,7 @@ public class InventorySlotUI : MonoBehaviour
     {
         if (item == null)
         {
+            Debug.LogError("Something went wrong. Item was not added.");
             currentItem = null;
             return;
         }
@@ -26,14 +28,17 @@ public class InventorySlotUI : MonoBehaviour
             Debug.Log($"[SetItem] {item.name} returned to slot {name}");
             return;
         }
-
-        if (!IsEmpty())
+        if (!IsEmpty() && currentItem != item && sourceSlot != null)
         {
             // Swap: put current item into source slot
-            ItemUI previousItem = currentItem;
+            previousItem = currentItem;
+
+            /// Source slot = the onenddrag slot
 
             if (sourceSlot != null)
             {
+                Debug.Log("! - A swap happened - !");
+                // Assign the old item to the old slot
                 sourceSlot.currentItem = previousItem;
                 previousItem.transform.SetParent(sourceSlot.transform, false);
                 previousItem.transform.localPosition = Vector3.zero;
@@ -45,6 +50,7 @@ public class InventorySlotUI : MonoBehaviour
                 Destroy(previousItem.gameObject);
             }
         }
+        else { previousItem = null; }
 
         // Place new item into this slot
         currentItem = item;
