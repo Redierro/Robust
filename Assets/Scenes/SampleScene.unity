@@ -362,6 +362,10 @@ MonoBehaviour:
   playerSpawnMethod: 1
   spawnPrefabs:
   - {fileID: 4083961700272304663, guid: 8e80f452cadee704eadea54462a823ea, type: 3}
+  - {fileID: 8945714050185914562, guid: b4380a1ab6006694d85873c94ba8e775, type: 3}
+  - {fileID: 9034509822482694909, guid: 9d5bc4359b3142244a6cf163b80318f0, type: 3}
+  - {fileID: 2438242287589738887, guid: f12f6b2b1e86ffe498343a6b67f380dc, type: 3}
+  - {fileID: 3252647892188839289, guid: 9af44087c7a29be4c936bd9bcba8f63d, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -676,7 +680,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.39, z: -2.8}
+  m_LocalPosition: {x: 0, y: 0.70000005, z: 0.48999977}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

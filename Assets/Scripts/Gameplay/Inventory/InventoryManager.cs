@@ -1,14 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.EventSystems;
 
 namespace SteamLobby
 {
     public class InventoryManager : NetworkBehaviour
     {
-        public Transform inventoryCanvas;
-        public List<InventorySlotUI> slots; // Assigned in Inspector
+        public RectTransform inventoryCanvas;
+        public List<InventorySlotUI> slots; // Assigned in Inspector not grabbed during runtime
         public GameObject itemUIPrefab;
+        public RectTransform inventoryBounds;
         public bool isInventoryOpen => inventoryCanvas != null && inventoryCanvas.gameObject.activeSelf;
 
         [SerializeField] private CameraTransitionController camController;
@@ -31,7 +33,7 @@ namespace SteamLobby
 
                     ItemUI itemUI = itemGO.GetComponent<ItemUI>();
                     itemUI.Setup(item);
-                    slot.SetItem(itemUI, null);
+                    slot.SetItem(itemUI, null, true);
                     return;
                 }
             }

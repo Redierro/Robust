@@ -3,79 +3,106 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
-public class ItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+namespace SteamLobby
 {
-    public Item itemData;
-    public Transform originalSlot;
-
-    [SerializeField] private Image icon;
-    [SerializeField] private TextMeshProUGUI label;
-
-    private CanvasGroup canvasGroup;
-
-    void Awake()
+    public class ItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
-        canvasGroup = GetComponent<CanvasGroup>();
-    }
+        public Item itemData;
+        public Transform originalSlot;
 
-    public void Setup(Item item)
-    {
-        itemData = item;
+        [SerializeField] private Image icon;
+        [SerializeField] private TextMeshProUGUI label;
+        private InventoryManager inventoryManager;
 
-        if (icon != null && item.icon != null)
-            icon.sprite = item.icon;
+        private CanvasGroup canvasGroup;
 
-        if (label != null)
-            label.text = item.itemName;
-
-        Debug.Log("ItemUI setup for: " + item.itemName);
-    }
-
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        Debug.Log($"[Drag Start] Dragging item: {itemData.name} from slot {transform.parent.name}");
-
-        originalSlot = transform.parent;
-
-        transform.SetParent(transform.root, true);          // keep world position
-        transform.SetAsLastSibling();                       // render above everything
-
-        RectTransform rt = GetComponent<RectTransform>();
-        rt.pivot = new Vector2(0.5f, 0.5f);                 // center it
-        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
-
-        canvasGroup.blocksRaycasts = false;
-    }
-
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        transform.position = eventData.position;
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        canvasGroup.blocksRaycasts = true;
-
-        InventorySlotUI newSlot = eventData.pointerEnter?.GetComponentInParent<InventorySlotUI>();
-        Debug.Log($"[Drag End] Dropped item: {itemData.name} in slot {newSlot}");
-
-        if (newSlot != null)
+        void Awake()
         {
-            InventorySlotUI sourceSlot = originalSlot.GetComponent<InventorySlotUI>();
-            newSlot.SetItem(this, sourceSlot); // Pass the sourceSlot directly
+            canvasGroup = GetComponent<CanvasGroup>();
         }
-        else
-        {
-            transform.SetParent(originalSlot, false);
-            ResetTransform();
-        }
-    }
 
-    private void ResetTransform()
-    {
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
-        transform.localScale = Vector3.one;
+        public void Setup(Item item)
+        {
+            itemData = item;
+
+            if (icon != null && item.icon != null)
+                icon.sprite = item.icon;
+
+            if (label != null)
+                label.text = item.itemName;
+
+            Debug.Log("ItemUI setup for: " + item.itemName);
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            Debug.Log($"[Drag Start] Dragging item: {itemData.name} from slot {transform.parent.name}");
+            originalSlot = transform.parent;
+
+            transform.SetParent(originalSlot.parent, true);          // keep world position
+            transform.SetAsLastSibling();                       // render above everything
+
+            RectTransform rt = GetComponent<RectTransform>();
+            rt.pivot = new Vector2(0.5f, 0.5f);                 // center it
+            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+
+            canvasGroup.blocksRaycasts = false;
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            // Track the item's position to show it being dragged
+            Vector3 worldPoint;
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                transform as RectTransform,
+                eventData.position,
+                eventData.pressEventCamera,
+                out worldPoint
+            );
+
+            transform.position = worldPoint;
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            canvasGroup.blocksRaycasts = true;
+
+            InventoryManager inventoryManager = FindObjectOfType<InventoryManager>();
+
+            if (IsOutsideInventory(eventData, inventoryManager.inventoryBounds))
+            {
+
+            }
+
+            InventorySlotUI newSlot = eventData.pointerEnter?.GetComponentInParent<InventorySlotUI>();
+            Debug.Log($"[Drag End] Dropped item: {itemData.name} in slot {newSlot}");
+
+            if (newSlot != null)
+            {
+                InventorySlotUI sourceSlot = originalSlot.GetComponent<InventorySlotUI>();
+                newSlot.SetItem(this, sourceSlot, false);
+            }
+            else
+            {
+                transform.SetParent(originalSlot, false);
+                ResetTransform();
+            }
+        }
+        private bool IsOutsideInventory(PointerEventData eventData, RectTransform inventoryBounds)
+        {
+            return !RectTransformUtility.RectangleContainsScreenPoint(
+                inventoryBounds,
+                eventData.position,
+                eventData.pressEventCamera
+            );
+        }
+
+        private void ResetTransform()
+        {
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+            transform.localScale = Vector3.one;
+        }
     }
 }
+
