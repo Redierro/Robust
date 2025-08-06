@@ -5302,6 +5302,7 @@ MonoBehaviour:
   - {fileID: 2679553098329103401}
   - {fileID: 8719657461922703805}
   itemUIPrefab: {fileID: 7906169351938583927, guid: 55b8cd2f985e67649927c2e782e9fe45, type: 3}
+  playerObject: {fileID: 1419913315529327865}
   inventoryBounds: {fileID: 5000192565118137480}
   camController: {fileID: 242624904657187652}
 --- !u!1 &7098114592941212455

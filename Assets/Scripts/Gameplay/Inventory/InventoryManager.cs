@@ -10,6 +10,7 @@ namespace SteamLobby
         public RectTransform inventoryCanvas;
         public List<InventorySlotUI> slots; // Assigned in Inspector not grabbed during runtime
         public GameObject itemUIPrefab;
+        public Transform playerObject;
         public RectTransform inventoryBounds;
         public bool isInventoryOpen => inventoryCanvas != null && inventoryCanvas.gameObject.activeSelf;
 
@@ -60,11 +61,29 @@ namespace SteamLobby
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-
+        public void DropItem(Item itemData)
+        {
+            if (itemData == null)
+                return;
+            Vector3 dropPosition = playerObject.position + playerObject.forward * 2f;
+            // Send lightweight data to server
+            CmdDropItem(itemData.itemName, dropPosition);
+        }
         public void ClearInventory()
         {
             foreach (var slot in slots)
                 slot.ClearItem();
+        }
+        [Command]
+        public void CmdDropItem(string itemName, Vector3 position)
+        {
+            Item itemToDrop = ItemManager.Instance.GetItemByName(itemName);
+
+            if (itemToDrop?.prefab != null)
+            {
+                GameObject droppedItem = Instantiate(itemToDrop.prefab, position, Quaternion.identity);
+                NetworkServer.Spawn(droppedItem); // This syncs it across all clients
+            }
         }
     }
 }
