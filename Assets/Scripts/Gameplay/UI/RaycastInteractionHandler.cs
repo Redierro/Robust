@@ -36,6 +36,8 @@ public class RaycastInteractionHandler : NetworkBehaviour
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     interactable.Interact(gameObject);
+                    // Disable locally to prevent further interaction
+                    target.SetActive(false);
                     DestroyObject(target.gameObject);
                 }
 
@@ -50,6 +52,9 @@ public class RaycastInteractionHandler : NetworkBehaviour
 
     private void DestroyObject(GameObject gameObject)
     {
-        NetworkServer.Destroy(gameObject);
+        if (gameObject != null)
+        {
+            NetworkServer.Destroy(gameObject);
+        }
     }
 }

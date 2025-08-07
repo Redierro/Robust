@@ -12,7 +12,12 @@ namespace SteamLobby
         public GameObject itemUIPrefab;
         public Transform playerObject;
         public RectTransform inventoryBounds;
+        
+        //Local checking
         public bool isInventoryOpen => inventoryCanvas != null && inventoryCanvas.gameObject.activeSelf;
+        // Network checking
+        [SyncVar(hook = nameof(OnInventoryStateChanged))]
+        private bool isInventoryOpenNetworked;
 
         [SerializeField] private CameraTransitionController camController;
         private PlayerController playerController;
@@ -74,7 +79,17 @@ namespace SteamLobby
             foreach (var slot in slots)
                 slot.ClearItem();
         }
+        void OnInventoryStateChanged(bool oldValue, bool newValue)
+        {
+            inventoryCanvas.gameObject.SetActive(newValue);
+            // Apply camera, cursor, movement lock here
+        }
+
         [Command]
+        public void CmdSetInventoryState(bool isOpen)
+        {
+            isInventoryOpenNetworked = isOpen;
+        }
         public void CmdDropItem(string itemName, Vector3 position)
         {
             Item itemToDrop = ItemManager.Instance.GetItemByName(itemName);
@@ -82,7 +97,7 @@ namespace SteamLobby
             if (itemToDrop?.prefab != null)
             {
                 GameObject droppedItem = Instantiate(itemToDrop.prefab, position, Quaternion.identity);
-                NetworkServer.Spawn(droppedItem); // This syncs it across all clients
+                NetworkServer.Spawn(droppedItem, connectionToClient); // This syncs it across all clients
             }
         }
     }
