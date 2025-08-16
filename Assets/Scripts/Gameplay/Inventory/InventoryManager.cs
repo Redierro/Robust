@@ -21,9 +21,11 @@ namespace SteamLobby
 
         [SerializeField] private CameraTransitionController camController;
         private PlayerController playerController;
+        private PlayerNetworkBridge networkBridge;
         void Start()
         {
             playerController = GetComponentInParent<PlayerController>();
+            networkBridge = GetComponentInParent<PlayerNetworkBridge>();
         }
 
         public void TryAddItem(Item item)
@@ -71,7 +73,7 @@ namespace SteamLobby
                 return;
             Vector3 dropPosition = playerObject.position + playerObject.forward * 2f;
             // Send lightweight data to server
-            CmdDropItem(itemData.itemName, dropPosition);
+            networkBridge.CmdDropItem(itemData.itemName, dropPosition);
         }
         public void ClearInventory()
         {
@@ -88,18 +90,6 @@ namespace SteamLobby
         public void CmdSetInventoryState(bool isOpen)
         {
             isInventoryOpenNetworked = isOpen;
-        }
-        [Server]
-        public void CmdDropItem(string itemName, Vector3 position)
-        {
-            Debug.Log($"[CmdDropItem] Server received drop request for: {itemName}");
-            Item itemToDrop = ItemManager.Instance.GetItemByName(itemName);
-
-            if (itemToDrop?.prefab != null)
-            {
-                GameObject droppedItem = Instantiate(itemToDrop.prefab, position, Quaternion.identity);
-                NetworkServer.Spawn(droppedItem, connectionToClient); // Don't pass connectionToClient unless you need ownership
-            }
         }
     }
 }
