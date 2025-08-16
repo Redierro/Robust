@@ -90,6 +90,7 @@ namespace SteamLobby
         {
             isInventoryOpenNetworked = isOpen;
         }
+        [Command]
         public void CmdDropItem(string itemName, Vector3 position)
         {
             Item itemToDrop = ItemManager.Instance.GetItemByName(itemName);
