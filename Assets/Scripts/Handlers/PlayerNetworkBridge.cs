@@ -4,7 +4,6 @@ using Steamworks;
 
 public class PlayerNetworkBridge : NetworkBehaviour
 {
-
     [Command]
     public void CmdDropItem(string itemName, Vector3 position)
     {

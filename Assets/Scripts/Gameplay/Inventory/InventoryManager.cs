@@ -20,13 +20,8 @@ namespace SteamLobby
         private bool isInventoryOpenNetworked;
 
         [SerializeField] private CameraTransitionController camController;
-        private PlayerController playerController;
-        private PlayerNetworkBridge networkBridge;
-        void Start()
-        {
-            playerController = GetComponentInParent<PlayerController>();
-            networkBridge = GetComponentInParent<PlayerNetworkBridge>();
-        }
+        public PlayerController playerController;
+        public PlayerNetworkBridge networkBridge;
 
         public void TryAddItem(Item item)
         {
