@@ -93,6 +93,7 @@ namespace SteamLobby
         [Command]
         public void CmdDropItem(string itemName, Vector3 position)
         {
+            Debug.Log($"[CmdDropItem] Server received drop request for: {itemName}");
             Item itemToDrop = ItemManager.Instance.GetItemByName(itemName);
 
             if (itemToDrop?.prefab != null)

@@ -71,7 +71,7 @@ namespace SteamLobby
 
             InventoryManager inventoryManager = FindObjectOfType<InventoryManager>();
 
-            if (IsOutsideInventory(eventData, inventoryManager.inventoryBounds) && inventoryManager.isLocalPlayer)
+            if (IsOutsideInventory(eventData, inventoryManager.inventoryBounds))
             {
                 inventoryManager.DropItem(itemData);
                 Destroy(gameObject); // Remove the item from the UI
