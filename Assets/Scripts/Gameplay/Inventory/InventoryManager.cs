@@ -98,7 +98,7 @@ namespace SteamLobby
             if (itemToDrop?.prefab != null)
             {
                 GameObject droppedItem = Instantiate(itemToDrop.prefab, position, Quaternion.identity);
-                NetworkServer.Spawn(droppedItem, connectionToClient); // This syncs it across all clients
+                NetworkServer.Spawn(droppedItem); // Don't pass connectionToClient unless you need ownership
             }
         }
     }
