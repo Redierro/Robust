@@ -22,6 +22,12 @@ namespace SteamLobby
         [SerializeField] private CameraTransitionController camController;
         public PlayerController playerController;
 
+        public override void OnStartLocalPlayer()
+        {
+            base.OnStartLocalPlayer();
+            playerObject = GetComponentInParent<PlayerController>().transform;
+        }
+
         public void TryAddItem(Item item)
         {
             foreach (InventorySlotUI slot in slots)
@@ -64,6 +70,7 @@ namespace SteamLobby
 
         public void DropItem(Item itemData)
         {
+            Debug.Log($"{netId} ({(isLocalPlayer ? "Local" : "Remote")}) dropping item. playerObject = {playerObject.name}");
             if (itemData == null)
                 return;
 
