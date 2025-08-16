@@ -89,8 +89,7 @@ namespace SteamLobby
         {
             isInventoryOpenNetworked = isOpen;
         }
-
-        [Command]
+        [Server]
         public void CmdDropItem(string itemName, Vector3 position)
         {
             Debug.Log($"[CmdDropItem] Server received drop request for: {itemName}");
