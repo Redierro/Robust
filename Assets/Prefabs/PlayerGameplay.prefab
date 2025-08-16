@@ -5321,8 +5321,8 @@ MonoBehaviour:
   playerObject: {fileID: 1419913315529327865}
   inventoryBounds: {fileID: 5000192565118137480}
   camController: {fileID: 242624904657187652}
-  playerController: {fileID: 0}
-  networkBridge: {fileID: 0}
+  playerController: {fileID: 8175021080601679878}
+  networkBridge: {fileID: 4754935828412735594}
 --- !u!1 &7098114592941212455
 GameObject:
   m_ObjectHideFlags: 0
