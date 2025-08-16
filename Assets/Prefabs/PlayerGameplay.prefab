@@ -2983,7 +2983,6 @@ GameObject:
   - component: {fileID: 6016845003480226753}
   - component: {fileID: 2034627730782305673}
   - component: {fileID: 7112282595309702261}
-  - component: {fileID: 4754935828412735594}
   m_Layer: 0
   m_Name: PlayerGameplay
   m_TagString: Untagged
@@ -3058,21 +3057,6 @@ MonoBehaviour:
   syncInterval: 0
   escapeMenu: {fileID: 1128429983297062275}
   escapeRaised: 0
---- !u!114 &4754935828412735594
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4083961700272304663}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b072ee9bd8a693a468b132947e689347, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
 --- !u!1 &4128639767179722512
 GameObject:
   m_ObjectHideFlags: 0
@@ -5322,7 +5306,6 @@ MonoBehaviour:
   inventoryBounds: {fileID: 5000192565118137480}
   camController: {fileID: 242624904657187652}
   playerController: {fileID: 8175021080601679878}
-  networkBridge: {fileID: 4754935828412735594}
 --- !u!1 &7098114592941212455
 GameObject:
   m_ObjectHideFlags: 0
