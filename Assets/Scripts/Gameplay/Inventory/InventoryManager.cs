@@ -12,6 +12,7 @@ namespace SteamLobby
         public GameObject itemUIPrefab;
         public Transform playerObject;
         public RectTransform inventoryBounds;
+        public static InventoryManager LocalInstance { get; private set; }
 
         // Local checking
         public bool isInventoryOpen => inventoryCanvas != null && inventoryCanvas.gameObject.activeSelf;
@@ -25,7 +26,7 @@ namespace SteamLobby
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
-            playerObject = GetComponentInParent<PlayerController>().transform;
+            LocalInstance = this;
         }
 
         public void TryAddItem(Item item)

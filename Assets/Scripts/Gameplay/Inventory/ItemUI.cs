@@ -21,6 +21,7 @@ namespace SteamLobby
         void Awake()
         {
             canvasGroup = GetComponent<CanvasGroup>();
+            InventoryManager inventoryManager = InventoryManager.LocalInstance;
         }
 
         public void Setup(Item item)
@@ -68,8 +69,6 @@ namespace SteamLobby
         public void OnEndDrag(PointerEventData eventData)
         {
             canvasGroup.blocksRaycasts = true;
-
-            InventoryManager inventoryManager = FindObjectOfType<InventoryManager>();
 
             if (IsOutsideInventory(eventData, inventoryManager.inventoryBounds))
             {
