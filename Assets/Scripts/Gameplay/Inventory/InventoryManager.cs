@@ -67,17 +67,15 @@ namespace SteamLobby
             if (itemData == null)
                 return;
 
-            Vector3 dropPosition = playerObject.position + playerObject.forward * 2f;
-
-            if (isServer)
+            if (isServer && isLocalPlayer)
             {
-                // Host/server handles it directly
-                ServerDropItem(itemData.itemName, dropPosition);
+                // Host dropping directly -> use own connectionToClient
+                ServerDropItem(itemData.itemName, connectionToClient);
             }
             else
             {
-                // Client asks server to spawn
-                CmdDropItem(itemData.itemName, dropPosition);
+                // Clients ask the server
+                CmdDropItem(itemData.itemName);
             }
         }
 
@@ -90,7 +88,7 @@ namespace SteamLobby
         void OnInventoryStateChanged(bool oldValue, bool newValue)
         {
             inventoryCanvas.gameObject.SetActive(newValue);
-            // Apply camera, cursor, movement lock here
+            // Apply camera, cursor, movement lock here if needed
         }
 
         [Command]
@@ -100,22 +98,36 @@ namespace SteamLobby
         }
 
         [Command]
-        private void CmdDropItem(string itemName, Vector3 position)
+        private void CmdDropItem(string itemName, NetworkConnectionToClient sender = null)
         {
-            // For clients -> delegate to server logic
-            ServerDropItem(itemName, position);
+            // Mirror automatically passes the calling player's connection
+            ServerDropItem(itemName, sender);
         }
 
         [Server]
-        private void ServerDropItem(string itemName, Vector3 position)
+        private void ServerDropItem(string itemName, NetworkConnectionToClient sender)
         {
-            Debug.Log($"[Server] DropItem executed for: {itemName}");
+            if (sender == null || sender.identity == null)
+            {
+                Debug.LogWarning("ServerDropItem called with no sender identity!");
+                return;
+            }
+
+            var inventory = sender.identity.GetComponentInChildren<InventoryManager>();
+            if (inventory == null)
+            {
+                Debug.LogWarning("No InventoryManager found on dropping player!");
+                return;
+            }
+
+            Vector3 dropPosition = inventory.playerObject.position + inventory.playerObject.forward * 2f;
+            Debug.Log($"[Server] {sender.identity.netId} dropped {itemName} at {dropPosition}");
 
             Item itemToDrop = ItemManager.Instance.GetItemByName(itemName);
             if (itemToDrop?.prefab != null)
             {
-                GameObject droppedItem = Instantiate(itemToDrop.prefab, position, Quaternion.identity);
-                NetworkServer.Spawn(droppedItem);
+                GameObject droppedItem = Instantiate(itemToDrop.prefab, dropPosition, Quaternion.identity);
+                NetworkServer.Spawn(droppedItem, sender); // sender ensures proper authority if needed
             }
         }
     }
