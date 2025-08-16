@@ -12,8 +12,8 @@ namespace SteamLobby
         public GameObject itemUIPrefab;
         public Transform playerObject;
         public RectTransform inventoryBounds;
-        
-        //Local checking
+
+        // Local checking
         public bool isInventoryOpen => inventoryCanvas != null && inventoryCanvas.gameObject.activeSelf;
         // Network checking
         [SyncVar(hook = nameof(OnInventoryStateChanged))]
@@ -61,19 +61,32 @@ namespace SteamLobby
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
+
         public void DropItem(Item itemData)
         {
             if (itemData == null)
                 return;
+
             Vector3 dropPosition = playerObject.position + playerObject.forward * 2f;
-            // Send lightweight data to server
-            CmdDropItem(itemData.itemName, dropPosition);
+
+            if (isServer)
+            {
+                // Host/server handles it directly
+                ServerDropItem(itemData.itemName, dropPosition);
+            }
+            else
+            {
+                // Client asks server to spawn
+                CmdDropItem(itemData.itemName, dropPosition);
+            }
         }
+
         public void ClearInventory()
         {
             foreach (var slot in slots)
                 slot.ClearItem();
         }
+
         void OnInventoryStateChanged(bool oldValue, bool newValue)
         {
             inventoryCanvas.gameObject.SetActive(newValue);
@@ -85,10 +98,18 @@ namespace SteamLobby
         {
             isInventoryOpenNetworked = isOpen;
         }
+
         [Command]
-        public void CmdDropItem(string itemName, Vector3 position)
+        private void CmdDropItem(string itemName, Vector3 position)
         {
-            Debug.Log($"[Server] CmdDropItem received for: {itemName}");
+            // For clients -> delegate to server logic
+            ServerDropItem(itemName, position);
+        }
+
+        [Server]
+        private void ServerDropItem(string itemName, Vector3 position)
+        {
+            Debug.Log($"[Server] DropItem executed for: {itemName}");
 
             Item itemToDrop = ItemManager.Instance.GetItemByName(itemName);
             if (itemToDrop?.prefab != null)
