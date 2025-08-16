@@ -3,7 +3,7 @@ using Mirror;
 
 namespace SteamLobby
 {
-    public class PlayerNetwork : NetworkBehaviour
+    public class PlayerNetworking : NetworkBehaviour
     {
         [Command]
         public void CmdDropItem(string itemName, Vector3 position)

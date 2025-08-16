@@ -21,11 +21,11 @@ namespace SteamLobby
 
         [SerializeField] private CameraTransitionController camController;
         private PlayerController playerController;
-        private PlayerNetwork playerNetwork;
+        private PlayerNetworking playerNetwork;
         void Start()
         {
             playerController = GetComponentInParent<PlayerController>();
-            playerNetwork = GetComponentInParent<PlayerNetwork>();
+            playerNetwork = GetComponentInParent<PlayerNetworking>();
         }
 
         public void TryAddItem(Item item)
