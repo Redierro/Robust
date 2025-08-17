@@ -217,14 +217,16 @@ namespace SteamLobby
 
             bool isInGameplay = SceneManager.GetActiveScene().name == "GameplayScene";
 
+            // If I'm a client and host disconnected (my SteamID != host SteamID)
             if (isInGameplay && SteamLobbySC.Instance.HostSteamID != SteamUser.GetSteamID().m_SteamID)
             {
-                Debug.Log("Host disconnected — showing disconnect panel to client. Showing UI to this id - " + SteamUser.GetSteamID().m_SteamID);
+                Debug.Log("Lost connection to host — showing message and delaying exit.");
+
                 StartCoroutine(ShowHostDisconnectAndReturn());
             }
             else
             {
-                Debug.Log("Client disconnected or not in gameplay — skipping panel.");
+                Debug.Log("Client disconnected normally or not in gameplay — no host-left panel.");
             }
         }
 
@@ -277,7 +279,18 @@ namespace SteamLobby
         /// <summary>
         /// This is called when a host is stopped.
         /// </summary>
-        public override void OnStopHost() { }
+        public override void OnStopHost()
+        {
+            base.OnStopHost();
+            Debug.Log("Host stopped — exiting immediately (no host-left message).");
+
+            // Optional: clean up Steam lobby if host
+            if (SteamLobbySC.Instance != null)
+                SteamLobbySC.Instance.LeaveLobby();
+
+            // Go straight back to menu (or quit)
+            SceneManager.LoadScene("SampleScene");
+        }
 
         /// <summary>
         /// This is called when a server is stopped - including when a host is stopped.
@@ -304,8 +317,13 @@ namespace SteamLobby
         }
         private IEnumerator ShowHostDisconnectAndReturn()
         {
+            // Show UI
             GlobalUIManager.Instance.OnDisconnectedPanel.SetActive(true);
-            yield return new WaitForSeconds(0.1f);
+
+            // Wait a couple of seconds so player sees it
+            yield return new WaitForSeconds(3f);
+
+            // Now return to menu
             SceneManager.LoadScene("SampleScene");
         }
 
