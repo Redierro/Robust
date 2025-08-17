@@ -18,6 +18,9 @@ namespace SteamLobby
                                                 // Overrides the base singleton so we don't
                                                 // have to cast to this type everywhere.
         public static new CustomNetworkManager singleton => (CustomNetworkManager)NetworkManager.singleton;
+        // Prevent double scene-loads / re-entrancy during shutdowns
+        private bool _isLoadingScene;
+        private bool _hostStopping;
         /// <summary>
         /// Runs on both Server and Client
         /// Networking is NOT initialized when this fires
@@ -94,13 +97,13 @@ namespace SteamLobby
             Debug.Log("Changed server scene to - " + newSceneName);
             if (newSceneName == "GameplayScene")
             {
-                this.playerPrefab = playerGameplayPrefab;
-                this.onlineScene = newSceneName;
+                playerPrefab = playerGameplayPrefab;
+                onlineScene = newSceneName;
             }
             else if (newSceneName == "SampleScene")
             {
-                this.playerPrefab = playerLobbyPrefab;
-                this.onlineScene = newSceneName;
+                playerPrefab = playerLobbyPrefab;
+                onlineScene = newSceneName;
             }
             base.ServerChangeScene(newSceneName);
         }
@@ -215,19 +218,42 @@ namespace SteamLobby
         {
             base.OnClientDisconnect();
 
+            // If this box is the host, skip any client-side panels.
+            // (When host stops, both server and client parts tear down.)
+            if (NetworkServer.active)
+            {
+                Debug.Log("[OnClientDisconnect] Running on host instance — skip host-left UI.");
+                return;
+            }
+
+            // Only show the host-left panel if we were in gameplay
             bool isInGameplay = SceneManager.GetActiveScene().name == "GameplayScene";
-
-            // If I'm a client and host disconnected (my SteamID != host SteamID)
-            if (isInGameplay && SteamLobbySC.Instance.HostSteamID != SteamUser.GetSteamID().m_SteamID)
+            if (!isInGameplay)
             {
-                Debug.Log("Lost connection to host — showing message and delaying exit.");
+                Debug.Log("[OnClientDisconnect] Not in gameplay — no host-left panel.");
+                return;
+            }
 
+            // If SteamLobbySC has already been destroyed during teardown, still show a generic panel.
+            ulong mySteam = 0;
+            ulong hostSteam = 0;
+
+            try { mySteam = SteamUser.GetSteamID().m_SteamID; } catch { /* ignore */ }
+
+            if (SteamLobbySC.Instance != null)
+                hostSteam = SteamLobbySC.Instance.HostSteamID;
+
+            // If my SteamID == hostSteam, that means *I* was the host (shouldn't be here since NetworkServer.active false),
+            // but guard anyway. Only show panel for non-host clients who lost connection to host.
+            if (mySteam != 0 && hostSteam != 0 && mySteam == hostSteam)
+            {
+                Debug.Log("[OnClientDisconnect] This client appears to be host; skipping panel.");
+                return;
+            }
+
+            Debug.Log("[OnClientDisconnect] Lost connection to host — showing message and delaying exit.");
+            if (!_isLoadingScene)
                 StartCoroutine(ShowHostDisconnectAndReturn());
-            }
-            else
-            {
-                Debug.Log("Client disconnected normally or not in gameplay — no host-left panel.");
-            }
         }
 
 
@@ -282,14 +308,18 @@ namespace SteamLobby
         public override void OnStopHost()
         {
             base.OnStopHost();
+            _hostStopping = true;
             Debug.Log("Host stopped — exiting immediately (no host-left message).");
 
-            // Optional: clean up Steam lobby if host
+            // Clean up Steam lobby (guard in case object already gone)
             if (SteamLobbySC.Instance != null)
-                SteamLobbySC.Instance.LeaveLobby();
+            {
+                try { SteamLobbySC.Instance.LeaveLobby(); } catch { /* ignore */ }
+            }
 
-            // Go straight back to menu (or quit)
-            SceneManager.LoadScene("SampleScene");
+            // Avoid loading scenes during teardown in the same frame
+            if (!_isLoadingScene)
+                StartCoroutine(LoadMenuNextFrame());
         }
 
         /// <summary>
@@ -303,30 +333,82 @@ namespace SteamLobby
         public override void OnStopClient()
         {
             base.OnStopClient();
-            Debug.Log("Client disconnected — leaving Steam lobby.");
+            Debug.Log("Client stopped — leaving Steam lobby (if any).");
 
             if (SteamLobbySC.Instance != null)
-                SteamLobbySC.Instance.LeaveLobby();
+            {
+                try { SteamLobbySC.Instance.LeaveLobby(); } catch { /* ignore */ }
+            }
         }
 
         public void LeaveGameToLobby(string lobbySceneName = "SampleScene")
         {
-            ServerChangeScene(lobbySceneName);
-            SteamLobbySC.Instance.LeaveLobby();
-            SceneManager.LoadScene(lobbySceneName);
+            // Explicit leave requested — only the server should drive ServerChangeScene.
+            if (NetworkServer.active)
+            {
+                ServerChangeScene(lobbySceneName);
+            }
+
+            if (SteamLobbySC.Instance != null)
+            {
+                try { SteamLobbySC.Instance.LeaveLobby(); } catch { /* ignore */ }
+            }
+
+            if (!_isLoadingScene)
+                StartCoroutine(LoadSceneSafe(lobbySceneName));
         }
         private IEnumerator ShowHostDisconnectAndReturn()
         {
-            // Show UI
-            GlobalUIManager.Instance.OnDisconnectedPanel.SetActive(true);
+            // UI might already be destroyed if scene is half-unloaded; guard it
+            if (GlobalUIManager.Instance != null && GlobalUIManager.Instance.OnDisconnectedPanel != null)
+            {
+                GlobalUIManager.Instance.OnDisconnectedPanel.SetActive(true);
+            }
 
-            // Wait a couple of seconds so player sees it
+            // Give player time to read
             yield return new WaitForSeconds(3f);
 
-            // Now return to menu
-            SceneManager.LoadScene("SampleScene");
+            // Ensure client is fully stopped before loading menu
+            if (NetworkClient.isConnected)
+                NetworkManager.singleton.StopClient();
+
+            yield return null; // wait one frame
+
+            if (!_isLoadingScene)
+                yield return LoadSceneSafe("SampleScene");
         }
 
+        private IEnumerator LoadMenuNextFrame()
+        {
+            yield return null; // wait a frame to avoid race with teardown
+            if (!_isLoadingScene)
+                yield return LoadSceneSafe("SampleScene");
+        }
+
+        private IEnumerator LoadSceneSafe(string sceneName)
+        {
+            if (_isLoadingScene) yield break;
+            _isLoadingScene = true;
+
+            // If a load is already in progress elsewhere, this will gracefully no-op
+            AsyncOperation op = null;
+            try
+            {
+                op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"LoadSceneAsync threw: {e.Message}");
+            }
+
+            if (op != null)
+            {
+                while (!op.isDone)
+                    yield return null;
+            }
+
+            _isLoadingScene = false;
+        }
         #endregion
     }
 }
