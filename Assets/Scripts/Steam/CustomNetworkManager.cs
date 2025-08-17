@@ -18,9 +18,6 @@ namespace SteamLobby
                                                 // Overrides the base singleton so we don't
                                                 // have to cast to this type everywhere.
         public static new CustomNetworkManager singleton => (CustomNetworkManager)NetworkManager.singleton;
-        // Prevent double scene-loads / re-entrancy during shutdowns
-        private bool _isLoadingScene;
-        private bool _hostStopping;
         /// <summary>
         /// Runs on both Server and Client
         /// Networking is NOT initialized when this fires
@@ -97,13 +94,13 @@ namespace SteamLobby
             Debug.Log("Changed server scene to - " + newSceneName);
             if (newSceneName == "GameplayScene")
             {
-                playerPrefab = playerGameplayPrefab;
-                onlineScene = newSceneName;
+                this.playerPrefab = playerGameplayPrefab;
+                this.onlineScene = newSceneName;
             }
             else if (newSceneName == "SampleScene")
             {
-                playerPrefab = playerLobbyPrefab;
-                onlineScene = newSceneName;
+                this.playerPrefab = playerLobbyPrefab;
+                this.onlineScene = newSceneName;
             }
             base.ServerChangeScene(newSceneName);
         }
@@ -220,33 +217,14 @@ namespace SteamLobby
 
             bool isInGameplay = SceneManager.GetActiveScene().name == "GameplayScene";
 
-            ulong mySteam = 0;
-            ulong hostSteam = 0;
-
-            try
+            if (isInGameplay && SteamLobbySC.Instance.HostSteamID != SteamUser.GetSteamID().m_SteamID)
             {
-                // Safely get my SteamID if API is still running
-                if (SteamManager.Initialized)
-                    mySteam = SteamUser.GetSteamID().m_SteamID;
-            }
-            catch
-            {
-                Debug.LogWarning("Steam API not available during disconnect.");
-            }
-
-            if (SteamLobbySC.Instance != null)
-                hostSteam = SteamLobbySC.Instance.HostSteamID;
-
-            // If I'm a client (not the host) and got disconnected during gameplay
-            if (isInGameplay && mySteam != 0 && mySteam != hostSteam)
-            {
-                Debug.Log("Lost connection to host — showing message and delaying exit.");
-
+                Debug.Log("Host disconnected — showing disconnect panel to client. Showing UI to this id - " + SteamUser.GetSteamID().m_SteamID);
                 StartCoroutine(ShowHostDisconnectAndReturn());
             }
             else
             {
-                Debug.Log("Client disconnected normally or not in gameplay — no host-left panel.");
+                Debug.Log("Client disconnected or not in gameplay — skipping panel.");
             }
         }
 
@@ -299,22 +277,7 @@ namespace SteamLobby
         /// <summary>
         /// This is called when a host is stopped.
         /// </summary>
-        public override void OnStopHost()
-        {
-            base.OnStopHost();
-            _hostStopping = true;
-            Debug.Log("Host stopped — exiting immediately (no host-left message).");
-
-            // Clean up Steam lobby (guard in case object already gone)
-            if (SteamLobbySC.Instance != null)
-            {
-                try { SteamLobbySC.Instance.LeaveLobby(); } catch { /* ignore */ }
-            }
-
-            // Avoid loading scenes during teardown in the same frame
-            if (!_isLoadingScene)
-                StartCoroutine(LoadMenuNextFrame());
-        }
+        public override void OnStopHost() { }
 
         /// <summary>
         /// This is called when a server is stopped - including when a host is stopped.
@@ -327,74 +290,25 @@ namespace SteamLobby
         public override void OnStopClient()
         {
             base.OnStopClient();
-            Debug.Log("Client stopped — leaving Steam lobby (if any).");
+            Debug.Log("Client disconnected — leaving Steam lobby.");
 
             if (SteamLobbySC.Instance != null)
-            {
-                try { SteamLobbySC.Instance.LeaveLobby(); } catch { /* ignore */ }
-            }
+                SteamLobbySC.Instance.LeaveLobby();
         }
 
         public void LeaveGameToLobby(string lobbySceneName = "SampleScene")
         {
-            // Explicit leave requested — only the server should drive ServerChangeScene.
-            if (NetworkServer.active)
-            {
-                ServerChangeScene(lobbySceneName);
-            }
-
-            if (SteamLobbySC.Instance != null)
-            {
-                try { SteamLobbySC.Instance.LeaveLobby(); } catch { /* ignore */ }
-            }
-
-            if (!_isLoadingScene)
-                StartCoroutine(LoadSceneSafe(lobbySceneName));
+            ServerChangeScene(lobbySceneName);
+            SteamLobbySC.Instance.LeaveLobby();
+            SceneManager.LoadScene(lobbySceneName);
         }
         private IEnumerator ShowHostDisconnectAndReturn()
         {
-            // Show UI
-            if (GlobalUIManager.Instance != null)
-                GlobalUIManager.Instance.OnDisconnectedPanel.SetActive(true);
-
-            // Delay a little to let Mirror finish its own scene unload
-            yield return new WaitForSecondsRealtime(2f);
-
-            // Now return to menu
+            GlobalUIManager.Instance.OnDisconnectedPanel.SetActive(true);
+            yield return new WaitForSeconds(0.1f);
             SceneManager.LoadScene("SampleScene");
         }
 
-        private IEnumerator LoadMenuNextFrame()
-        {
-            yield return null; // wait a frame to avoid race with teardown
-            if (!_isLoadingScene)
-                yield return LoadSceneSafe("SampleScene");
-        }
-
-        private IEnumerator LoadSceneSafe(string sceneName)
-        {
-            if (_isLoadingScene) yield break;
-            _isLoadingScene = true;
-
-            // If a load is already in progress elsewhere, this will gracefully no-op
-            AsyncOperation op = null;
-            try
-            {
-                op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"LoadSceneAsync threw: {e.Message}");
-            }
-
-            if (op != null)
-            {
-                while (!op.isDone)
-                    yield return null;
-            }
-
-            _isLoadingScene = false;
-        }
         #endregion
     }
 }
