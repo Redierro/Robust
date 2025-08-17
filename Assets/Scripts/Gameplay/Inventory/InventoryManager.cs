@@ -51,6 +51,9 @@ namespace SteamLobby
 
         public void OpenInventory()
         {
+            if (!isLocalPlayer) return;
+
+            CmdSetInventoryState(true); // Sync to others
             inventoryCanvas.gameObject.SetActive(true);
             camController?.TransitionToInventory();
             playerController.isMovementLocked = true;
@@ -61,6 +64,9 @@ namespace SteamLobby
 
         public void CloseInventory()
         {
+            if (!isLocalPlayer) return;
+
+            CmdSetInventoryState(false); // Sync to others
             inventoryCanvas.gameObject.SetActive(false);
             camController?.TransitionToDefault();
             playerController.isMovementLocked = false;
@@ -68,7 +74,6 @@ namespace SteamLobby
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-
         public void DropItem(Item itemData)
         {
             Debug.Log($"{netId} ({(isLocalPlayer ? "Local" : "Remote")}) dropping item. playerObject = {playerObject.name}");
@@ -97,9 +102,10 @@ namespace SteamLobby
 
         void OnInventoryStateChanged(bool oldValue, bool newValue)
         {
+            Debug.Log($"[Client] Inventory state changed: {newValue}");
             inventoryCanvas.gameObject.SetActive(newValue);
-            // Apply camera, cursor, movement lock here if needed
         }
+
 
         [Command]
         public void CmdSetInventoryState(bool isOpen)
