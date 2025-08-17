@@ -218,42 +218,36 @@ namespace SteamLobby
         {
             base.OnClientDisconnect();
 
-            // If this box is the host, skip any client-side panels.
-            // (When host stops, both server and client parts tear down.)
-            if (NetworkServer.active)
-            {
-                Debug.Log("[OnClientDisconnect] Running on host instance — skip host-left UI.");
-                return;
-            }
-
-            // Only show the host-left panel if we were in gameplay
             bool isInGameplay = SceneManager.GetActiveScene().name == "GameplayScene";
-            if (!isInGameplay)
-            {
-                Debug.Log("[OnClientDisconnect] Not in gameplay — no host-left panel.");
-                return;
-            }
 
-            // If SteamLobbySC has already been destroyed during teardown, still show a generic panel.
             ulong mySteam = 0;
             ulong hostSteam = 0;
 
-            try { mySteam = SteamUser.GetSteamID().m_SteamID; } catch { /* ignore */ }
+            try
+            {
+                // Safely get my SteamID if API is still running
+                if (SteamManager.Initialized)
+                    mySteam = SteamUser.GetSteamID().m_SteamID;
+            }
+            catch
+            {
+                Debug.LogWarning("Steam API not available during disconnect.");
+            }
 
             if (SteamLobbySC.Instance != null)
                 hostSteam = SteamLobbySC.Instance.HostSteamID;
 
-            // If my SteamID == hostSteam, that means *I* was the host (shouldn't be here since NetworkServer.active false),
-            // but guard anyway. Only show panel for non-host clients who lost connection to host.
-            if (mySteam != 0 && hostSteam != 0 && mySteam == hostSteam)
+            // If I'm a client (not the host) and got disconnected during gameplay
+            if (isInGameplay && mySteam != 0 && mySteam != hostSteam)
             {
-                Debug.Log("[OnClientDisconnect] This client appears to be host; skipping panel.");
-                return;
-            }
+                Debug.Log("Lost connection to host — showing message and delaying exit.");
 
-            Debug.Log("[OnClientDisconnect] Lost connection to host — showing message and delaying exit.");
-            if (!_isLoadingScene)
                 StartCoroutine(ShowHostDisconnectAndReturn());
+            }
+            else
+            {
+                Debug.Log("Client disconnected normally or not in gameplay — no host-left panel.");
+            }
         }
 
 
@@ -359,23 +353,15 @@ namespace SteamLobby
         }
         private IEnumerator ShowHostDisconnectAndReturn()
         {
-            // UI might already be destroyed if scene is half-unloaded; guard it
-            if (GlobalUIManager.Instance != null && GlobalUIManager.Instance.OnDisconnectedPanel != null)
-            {
+            // Show UI
+            if (GlobalUIManager.Instance != null)
                 GlobalUIManager.Instance.OnDisconnectedPanel.SetActive(true);
-            }
 
-            // Give player time to read
-            yield return new WaitForSeconds(3f);
+            // Delay a little to let Mirror finish its own scene unload
+            yield return new WaitForSecondsRealtime(2f);
 
-            // Ensure client is fully stopped before loading menu
-            if (NetworkClient.isConnected)
-                NetworkManager.singleton.StopClient();
-
-            yield return null; // wait one frame
-
-            if (!_isLoadingScene)
-                yield return LoadSceneSafe("SampleScene");
+            // Now return to menu
+            SceneManager.LoadScene("SampleScene");
         }
 
         private IEnumerator LoadMenuNextFrame()
