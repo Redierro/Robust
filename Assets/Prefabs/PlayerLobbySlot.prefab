@@ -437,6 +437,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  igUI: {fileID: 0}
+  invManage: {fileID: 0}
 --- !u!1 &7921030711283218152
 GameObject:
   m_ObjectHideFlags: 0
