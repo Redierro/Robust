@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: efc397398c5181e4dab3b34cda57cf32
+guid: 777cf05adc73ea64f9bcf44f868858a5
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -113,11 +113,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 107004
-  packageName: Mountain Trees - Dynamic Nature
-  packageVersion: 2.8.8
-  assetPath: Assets/NatureManufacture Assets/Dynamic Nature - Mountain Tree Pack/Demo/Dynamic
-    Nature - Mountain Tree Pack/ReflectionProbe-0.exr
-  uploadId: 736815
